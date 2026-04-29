@@ -9,32 +9,32 @@ const CusInfo = ({ singleCustomer }) => {
   const creditBalance = accountInfo?.hireprice;
   return (
     <>
-      <div className="cusinfotable p-datatable p-component p-datatable-responsive-scroll mb-6 text-center shadow-md">
-        <div className="grid lg:grid-cols-3 grid-cols-1 w-full mt-4">
+      <div className="cusinfotable p-datatable p-component p-datatable-responsive-scroll  mt-4">
+        <div className="grid lg:grid-cols-3 grid-cols-1 w-full">
           <div className="left w-full p-datatable-wrapper h-full">
             <table className="table table-bordered border-dark info w-full h-full p-datatable-table">
               <thead className="p-datatable-thead">
                 <tr role="row">
                   <th scope="col" colSpan="6" className="text-center">
-                    Customer Info
+                    গ্রাহক তথ্য
                   </th>
                 </tr>
               </thead>
               <tbody className="p-datatable-tbody">
                 <tr>
-                  <td className="tdwd1">Card No.</td>
+                  <td className="tdwd1">কার্ড নং</td>
                   <td className="tdwd">{cardno}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Customer Name</td>
+                  <td className="tdwd1">গ্রাহকের নাম</td>
                   <td className="tdwd">{customerInfo?.name}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Address</td>
+                  <td className="tdwd1">ঠিকানা</td>
                   {/* <td className="tdwd">{customerInfo?.address}</td> */}
                 </tr>
                 <tr>
-                  <td className="tdwd1">Mobile</td>
+                  <td className="tdwd1">মোবাইল</td>
                   <td className="tdwd">{customerInfo?.number}</td>
                 </tr>
               </tbody>
@@ -45,25 +45,25 @@ const CusInfo = ({ singleCustomer }) => {
               <thead className="p-datatable-thead">
                 <tr>
                   <th scope="col" colSpan="6" className="text-center">
-                    Sale Info
+                    বিক্রয় তথ্য
                   </th>
                 </tr>
               </thead>
               <tbody className="p-datatable-tbody">
                 <tr>
-                  <td className="tdwd1">Condition</td>
+                  <td className="tdwd1">কন্ডিশন</td>
                   <td className="tdwd"></td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Model</td>
+                  <td className="tdwd1">মডেল</td>
                   <td className="tdwd">{productInfo?.models}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Engine No.</td>
+                  <td className="tdwd1">ইঞ্জিন নং</td>
                   <td className="tdwd">{productInfo?.engine}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Chassis No.</td>
+                  <td className="tdwd1">চ্যাসিস নং</td>
                   <td className="tdwd">{productInfo?.chassis}</td>
                 </tr>
               </tbody>
@@ -74,31 +74,31 @@ const CusInfo = ({ singleCustomer }) => {
               <thead className="p-datatable-thead">
                 <tr>
                   <th scope="col" colSpan="6" className="text-center">
-                    Product Info
+                    পণ্য তথ্য
                   </th>
                 </tr>
               </thead>
               <tbody className="p-datatable-tbody">
                 <tr>
-                  <td className="tdwd1">Showroom</td>
+                  <td className="tdwd1">শোরুম</td>
                   <td className="tdwd">{showRoom}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Sale Date</td>
+                  <td className="tdwd1">বিক্রয়ের তারিখ</td>
                   <td className="tdwd">{moment(saledate).format("D/MM/YY")}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Sale Price</td>
+                  <td className="tdwd1">বিক্রয় মূল্য</td>
                   <td className="tdwd">{accountInfo?.saleprice}</td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Installment Date</td>
+                  <td className="tdwd1">কিস্তির তারিখ</td>
                   <td className="tdwd">
                     {moment(accountInfo?.insdate).format("D/MM/YY")}
                   </td>
                 </tr>
                 <tr>
-                  <td className="tdwd1">Installment Amount</td>
+                  <td className="tdwd1">কিস্তির পরিমাণ</td>
                   <td className="tdwd">{accountInfo?.insamount}</td>
                 </tr>
               </tbody>

@@ -21,13 +21,14 @@ function ViewSuplier() {
   const [allSuplier, setAllSupplier] = useState([]);
   const { showRoom } = useSelector((state) => state.userStore);
 
-  const exportCSV = (selectionOnly) => {
-    dt.current.exportCSV({ selectionOnly });
-  };
-
   const paginatorLeft = <Button type="button" icon="pi pi-refresh" text />;
   const paginatorRight = (
-    <Button type="button" icon="pi pi-download" text onClick={exportCSV} />
+    <Button
+      type="button"
+      icon="pi pi-download"
+      text
+      onClick={() => dt.current.exportCSV({ selectionOnly: false })}
+    />
   );
 
   useEffect(() => {
@@ -62,8 +63,6 @@ function ViewSuplier() {
     );
   };
 
-  console.log(supplier?.data);
-
   const statusBodyTemplate = (rowData) => {
     return <Tag value={rowData.prodType} severity={getSeverity(rowData)} />;
   };
@@ -84,10 +83,6 @@ function ViewSuplier() {
       default:
         return null;
     }
-  };
-  const tabID = (data, props) => {
-    // eslint-disable-next-line react/prop-types
-    return props.rowIndex + 1;
   };
 
   const verifiedBodyTemplate = (rowData) => {
@@ -127,9 +122,10 @@ function ViewSuplier() {
   const footerGroup = (
     <ColumnGroup>
       <Row>
+        <Column footer={allSuplier?.length} />
         <Column
           footer="Totals:"
-          colSpan={5}
+          colSpan={4}
           footerStyle={{ textAlign: "right" }}
         />
         <Column footer={"0"} />
@@ -168,7 +164,7 @@ function ViewSuplier() {
         emptyMessage="No Suplier found."
       >
         <Column
-          body={tabID}
+          body={(data, props) => props.rowIndex + 1}
           header="ক্রঃ"
           showFilterMenu={false}
           filterPlaceholder="Search"

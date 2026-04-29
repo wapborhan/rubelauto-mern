@@ -140,8 +140,9 @@ export const insTermTemplate = (rowData) => {
       : "";
 
   return (
-    // <div className={`flex gap-3 justify-center w-full ${style}`}>
-    <div className={`flex gap-3 justify-center w-full `}>{monthDifference}</div>
+    <div className={`flex gap-3 justify-center w-full ${style}`}>
+    {/* <div className={`flex gap-3 justify-center w-full `}> */}
+      {monthDifference}</div>
   );
 };
 

@@ -101,7 +101,7 @@ export default function Customer() {
         stripedRows
         paginator
         rows={10}
-        rowClassName={rowClass}
+        // rowClassName={rowClass}
         // rowsPerPageOptions={[10, 25, 50, 100]}
         emptyMessage="কোনো কাস্টমার তথ্য নেই"
       >

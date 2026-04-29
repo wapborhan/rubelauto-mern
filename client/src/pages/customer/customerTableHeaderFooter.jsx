@@ -1,6 +1,4 @@
-import ExportCSV from "../../components/shared/exportButton/ExportCSV";
 import ExportExcel from "../../components/shared/exportButton/ExportExcel";
-import ExportPDF from "../../components/shared/exportButton/ExportPDF";
 import GlobalFilter from "../../components/shared/GlobalFilter";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "jspdf-autotable";
@@ -26,13 +24,14 @@ export const renderHeader = (
   setInstToDay,
   showRoomFilter,
   setShowRoomFilter,
-  uniqueShowRooms
+  uniqueShowRooms,
 ) => {
   return (
-    <div className=" lg:flex-nowrap flex-wrap justify-between">
-      {" "}
-      <div className="flex justify-between items-center gap-2">
-        <GlobalFilter setFilters={setFilters} filters={filters} />{" "}
+    <div className="grid lg:grid-cols-12 grid-cols-1 justify-between">
+      <div className="col-span-6">
+        <GlobalFilter setFilters={setFilters} filters={filters} />
+      </div>
+      <div className="col-span-4">
         <Dropdown
           value={showRoomFilter}
           options={uniqueShowRooms.map((sr) => ({ label: sr, value: sr }))}
@@ -41,87 +40,84 @@ export const renderHeader = (
           showClear
           className="w-52"
         />
-        <div className="flex align-items-center  justify-between gap-2">
-          <ExportCSV dt={dt} />
-          <ExportExcel product={customers?.data} />
-          <ExportPDF product={customers?.data} />{" "}
-        </div>
       </div>
-      <div className="flex flex-wrap justify-between items-center gap-3">
-        {/* Day Number Filter */}
-        <div className="flex items-center gap-2">
-          <label>Installment Day:</label>
 
-          <select
-            value={instFromDay || ""}
-            onChange={(e) => setInstFromDay(Number(e.target.value))}
-            className="border p-2 rounded"
+      <div className="col-span-2 flex align-items-center  justify-between gap-2">
+        <ExportExcel product={customers?.data} />
+      </div>
+      {/* Day Number Filter */}
+      <div className="col-span-4 flex items-center gap-2">
+        <label>Installment Day:</label>
+
+        <select
+          value={instFromDay || ""}
+          onChange={(e) => setInstFromDay(Number(e.target.value))}
+          className="border p-2 rounded"
+        >
+          <option value="">From</option>
+          {Array.from({ length: 31 }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={instToDay || ""}
+          onChange={(e) => setInstToDay(Number(e.target.value))}
+          className="border p-2 rounded"
+        >
+          <option value="">To</option>
+          {Array.from({ length: 31 }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+
+        {(instFromDay || instToDay) && (
+          <button
+            onClick={() => {
+              setInstFromDay(null);
+              setInstToDay(null);
+            }}
+            className="p-button p-button-sm p-button-text"
           >
-            <option value="">From</option>
-            {Array.from({ length: 31 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
+            ❌
+          </button>
+        )}
+      </div>
 
-          <select
-            value={instToDay || ""}
-            onChange={(e) => setInstToDay(Number(e.target.value))}
-            className="border p-2 rounded"
+      {/* Date Range Filter */}
+      <div className=" col-span-6 flex items-center gap-2">
+        <label className="text-nowrap"> Sale Date:</label>
+        <Calendar
+          value={fromDate}
+          onChange={(e) => setFromDate(e.value)}
+          dateFormat="dd-mm-yy"
+          showIcon
+          placeholder="From date"
+          className="w-7/12"
+        />
+        <Calendar
+          value={toDate}
+          onChange={(e) => setToDate(e.value)}
+          dateFormat="dd-mm-yy"
+          showIcon
+          placeholder="To date"
+          className="w-7/12"
+        />{" "}
+        {(fromDate || toDate) && (
+          <button
+            onClick={() => {
+              setFromDate(null);
+              setToDate(null);
+            }}
+            className="p-button p-button-sm p-button-text"
           >
-            <option value="">To</option>
-            {Array.from({ length: 31 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
-
-          {(instFromDay || instToDay) && (
-            <button
-              onClick={() => {
-                setInstFromDay(null);
-                setInstToDay(null);
-              }}
-              className="p-button p-button-sm p-button-text"
-            >
-              ❌
-            </button>
-          )}
-        </div>
-
-        {/* Date Range Filter */}
-        <div className="flex items-center gap-2">
-          <label className="text-nowrap"> Sale Date:</label>
-          <Calendar
-            value={fromDate}
-            onChange={(e) => setFromDate(e.value)}
-            dateFormat="dd-mm-yy"
-            showIcon
-            placeholder="From date"
-            className="w-7/12"
-          />
-          <Calendar
-            value={toDate}
-            onChange={(e) => setToDate(e.value)}
-            dateFormat="dd-mm-yy"
-            showIcon
-            placeholder="To date"
-            className="w-7/12"
-          />{" "}
-          {(fromDate || toDate) && (
-            <button
-              onClick={() => {
-                setFromDate(null);
-                setToDate(null);
-              }}
-              className="p-button p-button-sm p-button-text"
-            >
-              ❌
-            </button>
-          )}
-        </div>
+            ❌
+          </button>
+        )}
       </div>
     </div>
   );
@@ -184,7 +180,7 @@ export const thisYearTotal = (customers) => {
       }
 
       const daysDifference = Math.floor(
-        (currentDate - saleDate) / (1000 * 60 * 60 * 24)
+        (currentDate - saleDate) / (1000 * 60 * 60 * 24),
       );
       if (daysDifference > 30) {
         monthDifference++;

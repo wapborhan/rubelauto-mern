@@ -35,7 +35,7 @@ const CusAccountInfo = ({ singleCustomer }) => {
     <DataTable
       value={singleInstallment?.data}
       tableStyle={{ minWidth: "50rem" }}
-      className="shadow-md mb-14"
+      className="p-datatable p-component p-datatable-responsive-scroll  mt-4"
       emptyMessage="No installment found."
       rowHover
     >
