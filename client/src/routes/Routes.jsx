@@ -6,7 +6,7 @@ import SignIn from "../layout/signin/SignIn";
 import SignUp from "../layout/signup/SignUp";
 import PrivateRoute from "../provider/PrivateRoute";
 import AuthLay from "../layout/AuthLay";
-import ForgotPassword from "../layout/gorgot-password/ForgotPassword";
+import ForgotPassword from "../layout/forgot-password/ForgotPassword";
 
 const routes = createBrowserRouter([
   {
@@ -75,24 +75,24 @@ const routes = createBrowserRouter([
           },
           {
             path: "supplier/add",
-            element: <All.AddSuplier />,
+            element: <All.AddSupplier />,
           },
           {
             path: "supplier/view",
-            element: <All.ViewSuplier />,
+            element: <All.ViewSupplier />,
           },
           {
             path: "supplier/parts/view",
-            element: <All.ViewSuplier />,
+            element: <All.ViewSupplier />,
           },
 
           {
             path: "supplier/view/:id",
-            element: <All.SuplierDetails />,
+            element: <All.SupplierDetails />,
           },
           {
             path: "supplier/edit/:id",
-            element: <All.UpdateSuplier />,
+            element: <All.UpdateSupplier />,
           },
           {
             path: "supplier/payment/:id",

@@ -79,7 +79,7 @@ const ViewShowroom = () => {
         // paginator
         rows={15}
         // rowsPerPageOptions={[15, 25, 50, 100]}
-        emptyMessage="No Suplier found."
+        emptyMessage="No Supplier found."
       >
         <Column
           body={tabID}

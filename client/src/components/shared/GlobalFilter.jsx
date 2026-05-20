@@ -16,7 +16,7 @@ const GlobalFilter = ({ filters, setFilters }) => {
     setGlobalFilterValue(value);
   };
   return (
-    <div className="flex w-full">
+    <div className="flex">
       <IconField iconPosition="left">
         <InputIcon className="pi pi-search"> </InputIcon>
         <InputText

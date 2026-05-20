@@ -6,6 +6,7 @@ import MySidebar from "./MySidebar";
 import Header from "./Header";
 import Loading from "../components/shared/Loading";
 import { useSelector } from "react-redux";
+import Footer from "./Footer";
 
 const Root = () => {
   const navigation = useNavigation();
@@ -66,7 +67,7 @@ const Root = () => {
                 <Outlet />
               )}
             </div>
-            {/* <Footer /> */}
+            <Footer />
           </div>
         </div>
       </div>

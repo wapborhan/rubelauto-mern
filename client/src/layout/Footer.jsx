@@ -6,20 +6,23 @@ const Footer = () => {
           <div className="col-lg-6 col-md-12">
             <div className="copyright-info">
               <span>
-                Copyright © 2009 - {new Date().getFullYear()} Rubel Auto. All
-                Rights Reserved.
+                কপিরাইট © ২০০৯ -{" "}
+                {new Date().getFullYear().toLocaleString("bn-BD", {
+                  useGrouping: false,
+                })}{" "}
+                রুবেল অটো। সর্বস্বত্ব সংরক্ষিত।
               </span>
             </div>
           </div>
           <div className="col-lg-6 col-md-12">
             <div className="footer-menu text-right">
-              Developed By{" "}
+              ডেভেলপ করেছেন{" - "}
               <a
-                href="https://www.srdreamlab.com"
+                href="https://www.wapborhan.com"
                 target="__BLANK"
-                className="text-white"
+                className="text-black font-bold shadow-md"
               >
-                SR Dream Lab
+                মোঃ বোরহান উদ্দিন
               </a>
             </div>
           </div>

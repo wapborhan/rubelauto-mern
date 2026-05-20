@@ -13,10 +13,10 @@ import AddGuarantor from "./lead/AddGuarantor";
 import EditGuarantor from "./lead/EditGuarantor";
 import EditLead from "./lead/EditLead";
 //
-import AddSuplier from "./suppliers/AddSuplier";
-import ViewSuplier from "./suppliers/ViewSuplier";
-import UpdateSuplier from "./suppliers/UpdateSuplier";
-import SuplierDetails from "./suppliers/SuplierDetails";
+import AddSupplier from "./suppliers/AddSupplier";
+import ViewSupplier from "./suppliers/ViewSupplier";
+import UpdateSupplier from "./suppliers/UpdateSupplier";
+import SupplierDetails from "./suppliers/SupplierDetails";
 import SupplierPayment from "./suppliers/SupplierPayment";
 //
 import AddProduct from "./product/AddProduct";
@@ -69,10 +69,10 @@ export {
   ViewCost,
   Transfer,
   //
-  AddSuplier,
-  ViewSuplier,
-  UpdateSuplier,
-  SuplierDetails,
+  AddSupplier,
+  ViewSupplier,
+  UpdateSupplier,
+  SupplierDetails,
   SupplierPayment,
   //
   LeadDetails,

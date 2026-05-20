@@ -65,7 +65,7 @@ exports.allSupplier = async (req, res, next) => {
           totalPayment,
           currentBalance,
         };
-      })
+      }),
     );
 
     res.status(200).json({
@@ -172,16 +172,16 @@ exports.updateSupplier = async (req, res, next) => {
           address: address,
         },
       },
-      { new: true }
+      { new: true },
     );
     if (!updatedLead) {
-      return res.status(404).send({ message: "Suplier not found" });
+      return res.status(404).send({ message: "Supplier not found" });
     }
 
     res.status(200).json({
       success: true,
       status: 200,
-      message: "Suplier Updated",
+      message: "Supplier Updated",
       data: updatedLead,
     });
   } catch (error) {
@@ -263,7 +263,7 @@ exports.supplierStatement = async (req, res, next) => {
 
     // merge + sort by date
     const allTx = [...debitTx, ...creditTx].sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
+      (a, b) => new Date(a.date) - new Date(b.date),
     );
 
     // running balance calculation
@@ -281,11 +281,11 @@ exports.supplierStatement = async (req, res, next) => {
     // totals
     const debitTotal = transactionsWithBalance.reduce(
       (sum, t) => sum + t.debit,
-      0
+      0,
     );
     const creditTotal = transactionsWithBalance.reduce(
       (sum, t) => sum + t.credit,
-      0
+      0,
     );
 
     res.json({

@@ -10,8 +10,7 @@ import GlobalFilter from "../../components/shared/GlobalFilter";
 import { useGetSupplierQuery } from "../../redux/feature/api/supplierApi";
 import { useSelector } from "react-redux";
 import { Button } from "primereact/button";
-import { ColumnGroup } from "primereact/columngroup";
-import { Row } from "primereact/row";
+import { footerGroup } from "./supplierTableTemplate";
 
 function ViewSuplier() {
   const { pathname } = useLocation();
@@ -21,20 +20,23 @@ function ViewSuplier() {
   const [allSuplier, setAllSupplier] = useState([]);
   const { showRoom } = useSelector((state) => state.userStore);
 
-  const paginatorLeft = <Button type="button" icon="pi pi-refresh" text />;
+  const paginatorLeft = (
+    <Button type="button" icon="pi pi-refresh" onClick={() => refetch()} />
+  );
   const paginatorRight = (
     <Button
       type="button"
       icon="pi pi-download"
-      text
       onClick={() => dt.current.exportCSV({ selectionOnly: false })}
     />
   );
 
+  console.log(allSuplier);
+
   useEffect(() => {
     if (pathname === "/contact/supplier/parts/view") {
       const filterSupplier = supplier?.data?.filter(
-        (item) => item.prodType === "Parts"
+        (item) => item.prodType === "Parts",
       );
       setAllSupplier(filterSupplier);
     } else {
@@ -119,21 +121,7 @@ function ViewSuplier() {
   };
 
   const header = renderHeader();
-  const footerGroup = (
-    <ColumnGroup>
-      <Row>
-        <Column footer={allSuplier?.length} />
-        <Column
-          footer="Totals:"
-          colSpan={4}
-          footerStyle={{ textAlign: "right" }}
-        />
-        <Column footer={"0"} />
-        <Column footer={"0"} />
-        <Column footer={"0"} />
-      </Row>
-    </ColumnGroup>
-  );
+  const footer = footerGroup(allSuplier);
 
   return (
     <div className="card">
@@ -149,7 +137,7 @@ function ViewSuplier() {
         header={header}
         loading={isLoading}
         filters={filters}
-        globalFilterFields={["bssName", "prodType"]}
+        globalFilterFields={["bssName", "prodType", "empName", "mobile"]}
         paginator
         rows={10}
         stripedRows
@@ -160,8 +148,8 @@ function ViewSuplier() {
         paginatorRight={paginatorRight}
         // scrollable
         // scrollHeight="480px"
-        footerColumnGroup={footerGroup}
-        emptyMessage="No Suplier found."
+        footerColumnGroup={footer}
+        emptyMessage="No Supplier found."
       >
         <Column
           body={(data, props) => props.rowIndex + 1}

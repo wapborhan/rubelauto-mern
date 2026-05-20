@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useGetSingleSupplierQuery } from "../../redux/feature/api/supplierApi";
 import Loading from "../../components/shared/Loading";
-import ViewSuplier from "./ViewSuplier";
+import ViewSuplier from "./ViewSupplier";
 import SupplierDetailPur from "./SupplierDetailPur";
 
 const SuplierDetails = () => {
