@@ -40,13 +40,20 @@ export const createUser = createAsyncThunk(
       photo: data?.user?.photoURL,
       email: data?.user?.email,
     };
-  }
+  },
 );
+
 export const loginUser = createAsyncThunk(
   "userSlice/loginUser",
   async ({ email, password }) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  }
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+
+    return userCredential.user;
+  },
 );
 
 export const logOutUser = createAsyncThunk("userSlice/logOutUser", async () => {
@@ -57,7 +64,7 @@ export const logOutUser = createAsyncThunk("userSlice/logOutUser", async () => {
 //   "userSlice/forgotPassword",
 //   async (email) => {
 //     await sendPasswordResetEmail(auth, email);
-//   }
+//   },
 // );
 
 export const forgotPassword = createAsyncThunk(
@@ -73,7 +80,7 @@ export const forgotPassword = createAsyncThunk(
       console.error("Firebase error:", error.code, error.message);
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 const userSlice = createSlice({

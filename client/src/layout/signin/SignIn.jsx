@@ -26,19 +26,22 @@ const SignIn = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
+
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
 
-    const result = await dispatch(loginUser({ email, password }));
-    if (result) {
+    try {
+      const result = await dispatch(loginUser({ email, password }));
+
+      console.log("Login successful:", result);
+
       navigate(location?.state?.from || "/dashboard");
-    } else {
+    } catch (error) {
+      console.error("Login failed:", error);
       setLoading(false);
     }
   };
-
-  console.log(location?.state?.from);
 
   return (
     <div className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-lg z-10  mx-auto">
