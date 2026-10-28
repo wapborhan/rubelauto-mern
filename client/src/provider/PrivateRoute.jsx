@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { Toast } from "primereact/toast";
+import Loading from "../components/shared/Loading";
 
 const PrivateRoute = ({ children }) => {
   const toast = useRef(null);
@@ -33,8 +34,16 @@ const PrivateRoute = ({ children }) => {
               <a
                 href="https:api.whatsapp.com/send?phone=8801907093959&text=Need to Acive my Account."
                 className="blantershow-chat flex gap-2 border-2 rounded-full py-2 px-5 cursor-pointer hover:bg-green-600 hover:text-white  transition-all"
-                style="display: flex; gap: 10px; border: 1px solid #888; padding: 5px 10px; border-radius: 30px ;margin-top:10px ; width: fit-content;
-                        margin: 20px auto;"
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  border: "1px solid #888",
+                  padding: "5px 10px",
+                  borderRadius: "30px",
+                  marginTop: "10px",
+                  width: "fit-content",
+                  margin: "20px auto",
+                }}
                 title="Show Chat"
                 target="__BLANK"
               >
@@ -71,7 +80,11 @@ const PrivateRoute = ({ children }) => {
   }, [userType, isUpdated, navigate, location.pathname]);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex w-screen h-screen justify-center items-center">
+        <Loading />
+      </div>
+    );
   }
 
   if (email) {

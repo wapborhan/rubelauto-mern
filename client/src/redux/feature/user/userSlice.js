@@ -105,6 +105,9 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase("persist/REHYDRATE", (state) => {
+      state.isLoading = true;
+    });
     builder
       .addCase(createUser.pending, (state) => {
         state.name = "";
@@ -131,8 +134,8 @@ const userSlice = createSlice({
         state.errorMessage = action?.error?.message;
       });
     builder.addCase(loginUser.fulfilled, (state, { payload }) => {
-      state.name = payload?.name;
-      state.photo = payload?.photo;
+      state.name = payload?.displayName || payload?.name;
+      state.photo = payload?.photoURL || payload?.photo;
       state.email = payload?.email;
       state.joinDate = payload?.joinDate;
       state.mobile = payload?.mobile;

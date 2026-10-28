@@ -8,11 +8,11 @@ const getConnectionString = () => {
     connectionUrl = process.env.DATABASE_PROD;
     connectionUrl = connectionUrl.replace(
       "<db_username>",
-      process.env.DATABASE_LOCAL_USERNAME
+      process.env.DATABASE_PRODUCTION_USERNAME
     );
     connectionUrl = connectionUrl.replace(
       "<db_password>",
-      process.env.DATABASE_LOCAL_PASSWORD
+      process.env.DATABASE_PRODUCTION_PASSWORD
     );
   } else {
     connectionUrl = process.env.DATABASE_LOCAL;
