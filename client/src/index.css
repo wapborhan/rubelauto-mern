@@ -41,62 +41,70 @@ h4 {
   z-index: 1030;
 }
 
-/* This is for menu item */
-.sidebars a.active,
-.ps-active {
-  /* background-color: #198754; */
-  color: #198754;
-  font-weight: 700;
+/* Modern Sidebar Styling & Custom Scrollbar */
+.ps-sidebar-root {
+  border-right: 1px solid #e2e8f0 !important;
 }
 
-.ps-open {
-  background-color: #198754;
-  color: #000000;
-  font-weight: 700;
+.ps-sidebar-container {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  background-color: #ffffff !important;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
-.sidebars a.active svg {
-  color: #000000;
+.ps-sidebar-container::-webkit-scrollbar,
+.sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
 }
 
-.main-sedebar ::-webkit-scrollbar {
-  width: 0.3em;
+.ps-sidebar-container::-webkit-scrollbar-track,
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.main-sedebar ::-webkit-scrollbar-thumb {
-  background: linear-gradient(145deg, #28bf94, #198754);
-  border-radius: 3px;
+.ps-sidebar-container::-webkit-scrollbar-thumb,
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
-/* .main-sedebar ::-webkit-scrollbar-track {
-  background: linear-gradient(to right bottom, #d1d9e661, #e2e8ec71);
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-} */
+.ps-sidebar-container::-webkit-scrollbar-thumb:hover,
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.sidebar-scroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
 
 #content-wrapper::-webkit-scrollbar {
   width: 0.5em;
 }
 
 #content-wrapper::-webkit-scrollbar-thumb {
-  background: linear-gradient(145deg, #28bf94, #198754);
+  background: #cbd5e1;
   border-radius: 3px;
 }
 
 #content-wrapper::-webkit-scrollbar-track {
-  background: linear-gradient(to right bottom, #d1d9e6, #e2e8ec);
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+  background: #f1f5f9;
 }
 
 nav#topbar {
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 40;
 }
 
 #content-wrapper {
   background: #f8f9fa;
-  overflow-y: scroll;
-  height: 100dvh;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 fieldset {
@@ -121,7 +129,6 @@ input[type="time"],
 select,
 textarea,
 .p-dropdown {
-  /* background: #ffc0c045; */
   color: #000 !important;
   box-shadow: 0 0 20px -2px #acacac69 !important;
   border: 1px solid #2d2d2d59 !important;
@@ -202,62 +209,6 @@ input.p-dropdown-filter.p-inputtext.p-component {
   padding: 8px;
 }
 
-.ps-sidebar-container {
-  overflow: hidden !important;
-}
-
-nav.ps-menu-root ul li {
-  border-bottom: 1px solid #ff8a8ab7;
-}
-
-.ps-submenu-content ul li {
-  border-bottom: 1px solid #b9b9b9 !important;
-}
-
-.ps-submenu-content ul li a {
-  height: 30px !important;
-}
-
-.sidebars nav .ps-menu-button {
-  height: 40px !important;
-}
-
-button.p-highlight {
-  background: rgb(25 135 84 / 1);
-  color: white;
-}
-
-/* 
-@media screen and (max-width: 960px) {
-
-  .p-datatable[pr_id_2] .p-datatable-thead>tr>th,
-  .p-datatable[pr_id_2] .p-datatable-tfoot>tr>td {
-    display: none !important;
-
-  }
-
-  .p-datatable[pr_id_2] .p-datatable-tbody>tr>td {
-    display: flex;
-    width: 100% !important;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .p-datatable[pr_id_2] .p-datatable-tbody>tr>td:not(:last-child) {
-    border: 0 none;
-  }
-
-  .p-datatable[pr_id_2].p-datatable-gridlines .p-datatable-tbody>tr>td:last-child {
-    border-top: 0;
-    border-right: 0;
-    border-left: 0;
-  }
-
-  .p-datatable[pr_id_2] .p-datatable-tbody>tr>td>.p-column-title {
-    display: block;
-  }
-} */
-
 .p-datatable-tfoot tr td {
   padding: 0.5rem !important;
 }
@@ -277,3 +228,31 @@ button.p-highlight {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global Print Styles */
+@media print {
+  .no-print,
+  .sidebars,
+  header {
+    display: none !important;
+  }
+
+  html,
+  body,
+  #wrapper,
+  #content-wrapper,
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    background: #ffffff !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+

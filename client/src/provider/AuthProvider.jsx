@@ -47,6 +47,7 @@ const AuthProvider = ({ children }) => {
     isError,
   } = useGetUserByEmailQuery(firebaseUser?.email, {
     skip: !firebaseUser?.email,
+    refetchOnMountOrArgChange: true,
   });
 
   // 3. Update Redux store when backend user data arrives

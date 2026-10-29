@@ -71,21 +71,23 @@ exports.updateLead = async (req, res, next) => {
     const leadData = req.body;
     const id = req.params.id;
 
-    const { name, coname, nid, address, number, location, media } = leadData;
+    const { name, coname, nid, address, number, location, media, status, guarantor } = leadData;
+
+    const updateFields = {
+      name,
+      coname,
+      nid,
+      address,
+      number,
+      location,
+      media,
+    };
+    if (status !== undefined) updateFields.status = status;
+    if (guarantor !== undefined) updateFields.guarantor = guarantor;
 
     const updatedLead = await Leads.findOneAndUpdate(
       { _id: new ObjectId(id) },
-      {
-        $set: {
-          name: name,
-          coname: coname,
-          nid: nid,
-          address: address,
-          number: number,
-          location: location,
-          media: media,
-        },
-      },
+      { $set: updateFields },
       { new: true }
     );
     if (!updatedLead) {

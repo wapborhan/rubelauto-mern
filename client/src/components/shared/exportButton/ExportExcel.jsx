@@ -1,84 +1,30 @@
-import { Button } from "primereact/button";
+import { useState } from "react";
+import { exportToExcel } from "./exportHelper";
 
-const ExportExcel = ({ product }) => {
-  const exportExcel = async () => {
-    const xlsx = await import("xlsx");
+const ExportExcel = ({ data, product, state, customers, fileName = "export-data" }) => {
+  const exportData = data || product || state || customers || [];
+  const [loading, setLoading] = useState(false);
 
-    // যদি product single object হয় তাহলে array বানানো হবে
-    const data = Array.isArray(product) ? product : [product];
-
-    // Nested object flatten করার function
-    const flattenObject = (obj, prefix = "") => {
-      let result = {};
-
-      for (let key in obj) {
-        if (!obj.hasOwnProperty(key)) continue;
-
-        const value = obj[key];
-        const newKey = prefix ? `${prefix}.${key}` : key;
-
-        if (
-          value &&
-          typeof value === "object" &&
-          !Array.isArray(value) &&
-          !(value instanceof Date)
-        ) {
-          Object.assign(result, flattenObject(value, newKey));
-        } else if (Array.isArray(value)) {
-          result[newKey] = value.length > 0 ? JSON.stringify(value) : "[]";
-        } else {
-          result[newKey] = value ?? "";
-        }
-      }
-
-      return result;
-    };
-
-    const formattedData = data.map((item) => flattenObject(item));
-
-    const worksheet = xlsx.utils.json_to_sheet(formattedData);
-    const workbook = {
-      Sheets: { data: worksheet },
-      SheetNames: ["data"],
-    };
-
-    const excelBuffer = xlsx.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
-    saveAsExcelFile(excelBuffer, "customer-data");
-  };
-
-  const saveAsExcelFile = async (buffer, fileName) => {
-    const module = await import("file-saver");
-
-    if (module && module.default) {
-      const EXCEL_TYPE =
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-      const EXCEL_EXTENSION = ".xlsx";
-
-      const data = new Blob([buffer], {
-        type: EXCEL_TYPE,
-      });
-
-      module.default.saveAs(
-        data,
-        `${fileName}_export_${new Date().getTime()}${EXCEL_EXTENSION}`,
-      );
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+      await exportToExcel(exportData, fileName);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Button
+    <button
       type="button"
-      icon="pi pi-file-excel"
-      rounded
-      label="XLS"
-      onClick={exportExcel}
-      data-pr-tooltip="XLS"
-      className="p-badge-danger border-2 !bg-[#198754] px-4 py-2 text-white"
-    />
+      onClick={handleExport}
+      disabled={loading || !exportData || exportData.length === 0}
+      title="Excel (.xlsx) ফাইল ডাউনলোড করুন"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 hover:text-emerald-800 border border-emerald-300 rounded-md shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+    >
+      <i className={`pi ${loading ? "pi-spin pi-spinner" : "pi-file-excel"} text-xs text-emerald-600`}></i>
+      <span>XLS</span>
+    </button>
   );
 };
 

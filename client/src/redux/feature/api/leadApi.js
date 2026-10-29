@@ -16,10 +16,10 @@ const leadApi = createApi({
       invalidatesTags: ["Leads"],
     }),
     setUpdateLead: builder.mutation({
-      query: ({ id, post }) => ({
+      query: ({ id, post, inputData }) => ({
         url: `/lead/${id}`,
         method: "PATCH",
-        body: post,
+        body: post || inputData,
       }),
       invalidatesTags: ["Leads"],
     }),

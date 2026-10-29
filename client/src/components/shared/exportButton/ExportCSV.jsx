@@ -1,44 +1,23 @@
-import { Button } from "primereact/button";
+import { exportToCSV } from "./exportHelper";
 
-const ExportCSV = ({ dt, customers }) => {
-  const exportCSV = () => {
-    if (!customers || customers.length === 0) {
-      console.warn("No customer data to export.");
-      return;
-    }
+const ExportCSV = ({ data, customers, state, product, fileName = "export-data" }) => {
+  const exportData = data || customers || state || product || [];
 
-    // Define CSV header and rows
-    const headers = Object.keys(customers[0]).join(","); // Get the keys as headers
-    const rows = customers.map((customer) => Object.values(customer).join(","));
-
-    // Combine headers and rows into a CSV string
-    const csvContent = [headers, ...rows].join("\n");
-
-    // Create a Blob from the CSV string
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a link to download the file
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "customers.csv");
-    link.click();
-
-    // Clean up by revoking the URL
-    URL.revokeObjectURL(url);
+  const handleExport = () => {
+    exportToCSV(exportData, fileName);
   };
 
   return (
-    <Button
+    <button
       type="button"
-      label="CSV"
-      icon="pi pi-file"
-      rounded
-      className="p-badge-danger border-2 !bg-[#198754] px-4 py-2 text-white"
-      // onClick={() => exportCSV(false)}
-      onClick={exportCSV}
-      data-pr-tooltip="CSV"
-    />
+      onClick={handleExport}
+      disabled={!exportData || exportData.length === 0}
+      title="CSV ফাইল ডাউনলোড করুন"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 hover:text-slate-900 border border-gray-300 rounded-md shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+    >
+      <i className="pi pi-file text-xs text-slate-500"></i>
+      <span>CSV</span>
+    </button>
   );
 };
 

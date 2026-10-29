@@ -6,7 +6,7 @@ const leadSchema = new Schema(
     name: { type: String },
     coname: { type: String },
     nid: { type: String },
-    address: { type: Object },
+    address: { type: Schema.Types.Mixed },
     number: { type: String },
     location: { type: String },
     media: { type: String },
