@@ -18,10 +18,10 @@ const SignIn = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (name && email) {
-      navigate("/dashboard");
+    if (email) {
+      navigate(location?.state?.from || "/dashboard");
     }
-  }, [navigate, email, name]);
+  }, [navigate, email, location?.state?.from]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -100,50 +100,43 @@ const SignIn = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="পাসওয়ার্ড"
-                className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200 w-full"
+                placeholder="******"
+                className="px-4 py-2 w-full transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
               >
                 {showPassword ? (
-                  <i className="pi pi-eye-slash"></i>
+                  <i className="pi pi-eye-slash text-xl"></i>
                 ) : (
-                  <i className="pi pi-eye"></i>
+                  <i className="pi pi-eye text-xl"></i>
                 )}
               </button>
             </div>
-          </div>{" "}
-          <div className=" flex  justify-center gap-3">
+          </div>
+          <div>
             <Button
-              type="submit"
-              label="লগিন করুণ"
-              icon="pi pi-check"
               loading={loading}
-              // onClick={load}
+              type="submit"
+              label="লগইন"
+              icon="pi pi-sign-in"
               className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
-            >
-              {/* {loading ? (
-                  <span className="flex justify-center gap-3">
-                    <span>Logging in...</span>
-                  </span>
-                ) : (
-                  "Log in"
-                )} */}
-            </Button>
+            />
           </div>
           {/* <div className="flex flex-col space-y-5">
-              <span className="flex items-center justify-center space-x-2">
-                <span className="h-px bg-gray-400 w-14"></span>
-                <span className="font-normal text-gray-500">or login with</span>
-                <span className="h-px bg-gray-400 w-14"></span>
+            <span className="flex items-center justify-center space-x-2">
+              <span className="h-px bg-gray-400 w-14"></span>
+              <span className="font-normal text-gray-500">
+                অথবা লগইন করুন{" "}
               </span>
-              <div className="flex flex-col space-y-4">
-                <SocialSignIn />
-              </div>
-            </div> */}
+              <span className="h-px bg-gray-400 w-14"></span>
+            </span>
+            <div className="flex flex-col space-y-4">
+              <SocialSignIn />
+            </div>
+          </div> */}
         </form>
       </div>
     </div>
