@@ -1,4 +1,4 @@
-const { model, Schema } = require("mongoose");
+const { model, Schema, mongoose } = require("mongoose");
 
 const usersSchema = new Schema(
   {
@@ -14,11 +14,9 @@ const usersSchema = new Schema(
     userType: { type: String },
     isUpdated: { type: Boolean },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false, timestamps: true, collection: "users" }
 );
 
-const Users = model("users", usersSchema);
+const Users = mongoose.models.users || model("users", usersSchema, "users");
 
 module.exports = Users;
-
-

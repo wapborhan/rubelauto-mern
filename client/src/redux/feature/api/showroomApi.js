@@ -9,7 +9,7 @@ const showroomApi = createApi({
   endpoints: (builder) => ({
     setShowroom: builder.mutation({
       query: (post) => ({
-        url: ``,
+        url: `/showroom`,
         method: "POST",
         body: post,
       }),
@@ -19,14 +19,15 @@ const showroomApi = createApi({
       query: () => `/showroom`,
       transformResponse: (response) => {
         if (!response || !response.data) {
-          throw new Error("Invalid response format");
+          return [];
         }
         return response.data;
       },
+      providesTags: ["Showroom"],
     }),
-    providesTags: ["Showroom"],
   }),
 });
+
 export const { useSetShowroomMutation, useGetShowroomQuery } = showroomApi;
 
 export default showroomApi;

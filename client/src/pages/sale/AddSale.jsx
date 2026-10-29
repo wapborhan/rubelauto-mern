@@ -8,35 +8,34 @@ const AddSale = () => {
   const navigate = useNavigate();
   const toast = useRef(null);
   const path = useParams();
-  const [setPost, { isSuccess, isError, error }] = useSetCustomerMutation();
-
-  // const cardStas = path.status === "credit" ? "running" : path.status;
+  const [setCustomer, { isLoading, isSuccess, isError, error }] = useSetCustomerMutation();
 
   const postData = (data) => {
-    setPost({ leadsId: data?.leadsId, status: path?.status, data });
+    setCustomer({ leadsId: data?.leadsId, status: path?.status, data });
   };
 
   useEffect(() => {
     if (isSuccess) {
       toast.current.show({
         severity: "success",
-        summary: "Success",
-        detail: `Your ${path.status.toUpperCase()} sale has been added.`,
-        life: 3000,
+        summary: "সফল",
+        detail: `${path.status === "cash" ? "নগদ" : "কিস্তিতে"} বিক্রয় সফলভাবে সম্পন্ন হয়েছে`,
+        life: 2000,
       });
       setTimeout(() => {
-        navigate(`/customer/running`);
-      }, 3000);
+        navigate(path.status === "cash" ? `/customer/paid` : `/customer/running`);
+      }, 1500);
     }
   }, [isSuccess, navigate, path]);
-  useEffect(() => {
-    console.log(error);
 
+  useEffect(() => {
     if (isError) {
+      const errorMsg =
+        error?.data?.message || error?.data || error?.error || "বিক্রয় সংরক্ষণ করতে সমস্যা হয়েছে";
       toast.current.show({
         severity: "error",
-        summary: "Error",
-        detail: `${error?.data}`,
+        summary: "ত্রুটি",
+        detail: errorMsg,
         life: 3000,
       });
     }
@@ -45,7 +44,11 @@ const AddSale = () => {
   return (
     <>
       <Toast ref={toast} />
-      <SaleForm status={path.status} postData={(e) => postData(e)} />
+      <SaleForm
+        status={path.status}
+        postData={postData}
+        isSubmitting={isLoading}
+      />
     </>
   );
 };

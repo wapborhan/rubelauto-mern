@@ -6,7 +6,6 @@ import { Column } from "primereact/column";
 import { Calendar } from "primereact/calendar";
 import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
-import { Dropdown } from "primereact/dropdown";
 
 // Header
 export const renderHeader = (
@@ -27,32 +26,36 @@ export const renderHeader = (
   uniqueShowRooms,
 ) => {
   return (
-    <div className="grid lg:grid-cols-12 grid-cols-1 justify-between">
+    <div className="grid lg:grid-cols-12 grid-cols-1 justify-between gap-3 items-center">
       <div className="col-span-6">
         <GlobalFilter setFilters={setFilters} filters={filters} />
       </div>
       <div className="col-span-4">
-        <Dropdown
-          value={showRoomFilter}
-          options={uniqueShowRooms.map((sr) => ({ label: sr, value: sr }))}
-          placeholder="Select Showroom"
-          onChange={(e) => setShowRoomFilter(e.value)}
-          showClear
-          className="w-52"
-        />
+        <select
+          value={showRoomFilter || ""}
+          onChange={(e) => setShowRoomFilter(e.target.value || null)}
+          className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-200"
+        >
+          <option value="">সকল শোরুম (All Showrooms)</option>
+          {(uniqueShowRooms || []).map((sr) => (
+            <option key={sr} value={sr}>
+              {sr}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="col-span-2 flex align-items-center  justify-between gap-2">
+      <div className="col-span-2 flex align-items-center justify-between gap-2">
         <ExportExcel product={customers?.data} />
       </div>
       {/* Day Number Filter */}
       <div className="col-span-4 flex items-center gap-2">
-        <label>Installment Day:</label>
+        <label className="text-xs font-semibold text-gray-700">Installment Day:</label>
 
         <select
           value={instFromDay || ""}
-          onChange={(e) => setInstFromDay(Number(e.target.value))}
-          className="border p-2 rounded"
+          onChange={(e) => setInstFromDay(e.target.value ? Number(e.target.value) : null)}
+          className="border border-gray-300 text-sm p-1.5 rounded-lg bg-white"
         >
           <option value="">From</option>
           {Array.from({ length: 31 }, (_, i) => (
@@ -64,8 +67,8 @@ export const renderHeader = (
 
         <select
           value={instToDay || ""}
-          onChange={(e) => setInstToDay(Number(e.target.value))}
-          className="border p-2 rounded"
+          onChange={(e) => setInstToDay(e.target.value ? Number(e.target.value) : null)}
+          className="border border-gray-300 text-sm p-1.5 rounded-lg bg-white"
         >
           <option value="">To</option>
           {Array.from({ length: 31 }, (_, i) => (
@@ -81,16 +84,16 @@ export const renderHeader = (
               setInstFromDay(null);
               setInstToDay(null);
             }}
-            className="p-button p-button-sm p-button-text"
+            className="text-xs text-red-500 hover:text-red-700 font-bold px-1"
           >
-            ❌
+            ✕
           </button>
         )}
       </div>
 
       {/* Date Range Filter */}
-      <div className=" col-span-6 flex items-center gap-2">
-        <label className="text-nowrap"> Sale Date:</label>
+      <div className="col-span-6 flex items-center gap-2">
+        <label className="text-xs font-semibold text-gray-700 text-nowrap">Sale Date:</label>
         <Calendar
           value={fromDate}
           onChange={(e) => setFromDate(e.value)}
@@ -106,16 +109,16 @@ export const renderHeader = (
           showIcon
           placeholder="To date"
           className="w-7/12"
-        />{" "}
+        />
         {(fromDate || toDate) && (
           <button
             onClick={() => {
               setFromDate(null);
               setToDate(null);
             }}
-            className="p-button p-button-sm p-button-text"
+            className="text-xs text-red-500 hover:text-red-700 font-bold px-1"
           >
-            ❌
+            ✕
           </button>
         )}
       </div>

@@ -1,54 +1,38 @@
-import { Button } from "primereact/button";
-import React from "react";
+import { useState } from "react";
+import { exportToPDF } from "./exportHelper";
 
-const headDes = (
-  <>
-    <div className="name text-center text-red-600">
-      <h1>Rubel Auto</h1>
-    </div>
-  </>
-);
+const ExportPDF = ({
+  data,
+  product,
+  state,
+  customers,
+  fileName = "export-data",
+  title = "Report",
+  columns = null,
+}) => {
+  const exportData = data || product || state || customers || [];
+  const [loading, setLoading] = useState(false);
 
-const ExportPDF = ({ product }) => {
-  const cols = [
-    { field: "brandName", header: "Brand" },
-    { field: "modelName", header: "Model" },
-    { field: "cashPrice", header: "Cash Price" },
-    { field: "creditPrice", header: "Credit Price" },
-  ];
-
-  const exportColumns = cols.map((col) => ({
-    title: col.header,
-    dataKey: col.field,
-  }));
-
-  const exportPdf = () => {
-    import("jspdf").then((jsPDF) => {
-      import("jspdf-autotable").then(() => {
-        const doc = new jsPDF.default(0, 0);
-
-        doc.setTextColor(255, 0, 0); // Set text color to red
-        doc.setFontSize(16);
-        doc.text("Rubel Auto", doc.internal.pageSize.getWidth() / 2, 10, {
-          align: "center",
-        });
-
-        doc.autoTable(exportColumns, product);
-        doc.save("products.pdf");
-      });
-    });
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+      await exportToPDF(exportData, fileName, title, columns);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <Button
+    <button
       type="button"
-      icon="pi pi-file-pdf"
-      severity="warning"
-      rounded
-      label="PDF"
-      onClick={exportPdf}
-      data-pr-tooltip="PDF"
-      className="p-badge-danger border-2 !bg-[#198754] px-4 py-2 text-white"
-    />
+      onClick={handleExport}
+      disabled={loading || !exportData || exportData.length === 0}
+      title="PDF ডকুমেন্ট ডাউনলোড করুন"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 hover:text-rose-800 border border-rose-300 rounded-md shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+    >
+      <i className={`pi ${loading ? "pi-spin pi-spinner" : "pi-file-pdf"} text-xs text-rose-600`}></i>
+      <span>PDF</span>
+    </button>
   );
 };
 

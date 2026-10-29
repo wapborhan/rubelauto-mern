@@ -15,7 +15,7 @@ export const printMemo = (memos, calculateAmount, totals, name) => {
           .customer, .chalan {flex: 1;min-width: 220px;}
           .customer h3,.chalan h3 {margin: 0px 0;font-size: 16px;color: #333;}
           .memoHead b {color: #000;}
-          .company{display:flex;justify-content:center;align-items:center;margin-bottom:15px;position: relative;}.companyInner{display:flex;gap:24px;align-items:center;flex-wrap:wrap;text-align:center;position: relative}.companyLogo{width:120px;aspect-ratio:1/1;object-fit:contain;position: absolute;left: 0;}.companyInfo h2{margin:0 0 8px;font-size:30px;font-weight:700;color:#222}.companyInfo p{margin:4px 0;font-size:16px;color:#555} 
+          .company{display:flex;justify-content:center;align-items:start;margin-bottom:15px;position: relative;}.companyInner{display:flex;gap:24px;align-items:center;flex-wrap:wrap;text-align:center;position: relative}.companyLogo{width:85px;aspect-ratio:1/1;object-fit:contain;position: absolute;left: 0;}.companyInfo h2{margin:0 0 8px;font-size:30px;font-weight:700;color:#222}.companyInfo p{margin:4px 0;font-size:16px;color:#555} 
           .signatures {display: flex;justify-content: space-between; gap: 16px;flex-wrap: wrap;     position: static;  padding-top: 90px;  width: 100%;    bottom: -0;.signature-line {flex: 1;text-align: center;padding-top: 8px;border-top: 2px solid #000;font-weight: 500;color: #333;min-width: 150px;}
         </style>
       </head>

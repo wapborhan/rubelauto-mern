@@ -19,6 +19,7 @@ const persistConfig = {
   key: "root",
   storage,
   blacklist: [
+    userApi.reducerPath,
     incomeApi.reducerPath,
     costApi.reducerPath,
     leadApi.reducerPath,

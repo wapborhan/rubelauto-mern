@@ -6,12 +6,12 @@ exports.createUser = async (req, res, next) => {
     const user = req.body;
 
     const newUser = new Users(user);
-    const data = newUser.save();
+    const data = await newUser.save();
 
     res.status(200).json({
       success: true,
       status: 200,
-      message: "Users Found",
+      message: "User Created Successfully",
       data: data,
     });
   } catch (error) {
@@ -47,7 +47,9 @@ exports.allUser = async (req, res, next) => {
 exports.singleUser = async (req, res, next) => {
   try {
     const email = req.query.email;
-    const filter = { email: email };
+    const filter = email
+      ? { email: { $regex: new RegExp(`^${email.trim()}$`, "i") } }
+      : {};
 
     const data = await Users.findOne(filter);
 
@@ -82,8 +84,12 @@ exports.updateUser = async (req, res, next) => {
       isUpdated,
     } = updateData;
 
+    const filter = email
+      ? { email: { $regex: new RegExp(`^${email.trim()}$`, "i") } }
+      : {};
+
     const data = await Users.findOneAndUpdate(
-      { email: email },
+      filter,
       {
         $set: {
           name: name,
@@ -104,7 +110,7 @@ exports.updateUser = async (req, res, next) => {
     res.status(200).json({
       success: true,
       status: 200,
-      message: "Users Found",
+      message: "User Updated Successfully",
       data: data,
     });
   } catch (error) {

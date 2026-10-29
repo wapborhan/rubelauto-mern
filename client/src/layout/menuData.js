@@ -56,19 +56,19 @@ export const menuData = [
     ],
   },
   {
-    label: "Sale",
+    label: "বিক্রয়",
     icon: "pi-arrow-circle-down",
     subMenu: [
       {
-        label: "Credit Sale",
+        label: "বাকিতে বিক্রয়",
         path: "/sale/credit",
       },
       {
-        label: "Cash Sale",
+        label: "নগদ বিক্রয়",
         path: "/sale/cash",
       },
       {
-        label: "Return Sale",
+        label: "বিক্রয় ফেরত",
         path: "/sale/return",
       },
     ],
@@ -79,21 +79,20 @@ export const menuData = [
     icon: "pi-user",
     subMenu: [
       {
-        label: "Running",
+        label: "চলতি",
         path: "/customer/running",
       },
 
       {
-        label: "Seized",
+        label: "জব্দকৃত",
         path: "/customer/seized",
-      },
-    ],
-  },
-  {
-    label: "Documents",
-    icon: "pi-chart-bar",
+      }, {
+    label: "ডকুমেন্টস ",
     path: "/documents",
   },
+    ],
+  },
+ 
   {
     label: "পার্টস",
     icon: "pi-wrench",
@@ -142,25 +141,11 @@ export const menuData = [
         path: "/account/list",
       },
       {
-        label: "Showroom List",
-        path: "/showroom/list",
-      },
-      {
         label: "Transfer",
         path: "/account/transfer",
       },
     ],
   },
-  // {
-  //   label: "Showroom",
-  //   icon: "pi-database",
-  //   subMenu: [
-  //     {
-  //       label: "Add Showroom",
-  //       path: "/showroom/add",
-  //     },
-  //   ],
-  // },
   {
     label: "কর্মচারিবৃন্দ",
     icon: "pi-user-plus",
@@ -173,6 +158,20 @@ export const menuData = [
       {
         label: "Customer Due",
         path: "/customer/due/cardno",
+      },
+    ],
+  },
+  {
+    label: "অ্যাপ সেতিংস",
+    icon: "pi-cog",
+    subMenu: [
+      {
+        label: "শোরুম যোগ করুন",
+        path: "/showroom/add",
+      },
+      {
+        label: "শোরুমের তালিকা",
+        path: "/showroom/list",
       },
     ],
   },

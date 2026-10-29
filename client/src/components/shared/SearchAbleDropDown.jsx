@@ -1,50 +1,60 @@
-import { Dropdown } from "primereact/dropdown";
-
 const SearchAbleDropDown = (props) => {
   const {
     state,
     setState,
-    data,
-    placeHolder,
+    data = [],
     config = {},
-    disable,
-    requir,
+    disable = false,
+    requir = false,
+    className = "",
   } = props;
 
-  const enOptionTemplate = (option) => {
-    return (
-      <div className="flex align-items-center">
-        <div>{option[config.optLabel]}</div>
-      </div>
-    );
-  };
+  const labelKey = config.optLabel || "name";
+  const placeholder = config.placeHolder || "নির্বাচন করুন";
 
-  const selectedENTemplate = (option, props) => {
-    if (option) {
-      return (
-        <div className="flex align-items-center">
-          <div>{option[config.optLabel]}</div>
-        </div>
-      );
+  const handleChange = (e) => {
+    const val = e.target.value;
+    if (!val) {
+      setState(null);
+      return;
     }
-
-    return <span>{props.placeholder}</span>;
+    const found = data.find(
+      (item, idx) =>
+        (item._id || item.id || item.code || item.sku || item[labelKey] || idx).toString() === val
+    );
+    setState(found || null);
   };
+
+  const selectedValue = state
+    ? (state._id || state.id || state.code || state.sku || state[labelKey] || "").toString()
+    : "";
 
   return (
-    <Dropdown
-      value={state}
-      onChange={(e) => setState(e.value)}
-      options={data}
-      optionLabel={config.optLabel}
-      placeholder={config.placeHolder}
-      filter
-      valueTemplate={selectedENTemplate}
-      itemTemplate={enOptionTemplate}
-      className="w-full md:w-14rem border-2"
+    <select
+      value={selectedValue}
+      onChange={handleChange}
       disabled={disable}
       required={requir}
-    />
+      className={`w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none disabled:bg-gray-100 disabled:cursor-not-allowed ${className}`}
+    >
+      <option value="">{placeholder}</option>
+      {(data || []).map((item, index) => {
+        const val = (
+          item._id ||
+          item.id ||
+          item.code ||
+          item.sku ||
+          item[labelKey] ||
+          index
+        ).toString();
+        const displayLabel = item[labelKey] || item.name || item.label || val;
+        return (
+          <option key={val + "-" + index} value={val}>
+            {displayLabel}
+          </option>
+        );
+      })}
+    </select>
   );
 };
 

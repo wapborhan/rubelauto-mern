@@ -121,7 +121,8 @@ exports.allCustomer = async (req, res, next) => {
           ...customer.accountInfo,
           totalInstallmentAmount,
         },
-        // installments: customerInstallments,
+        installments: customerInstallments,
+        paidInstallmentCount: customerInstallments.length,
       });
     }
 
