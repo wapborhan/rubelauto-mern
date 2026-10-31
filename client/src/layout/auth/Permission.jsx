@@ -42,14 +42,14 @@ const Permission = () => {
   // If unauthenticated, redirect to signin
   useEffect(() => {
     if (!isLoading && !email) {
-      navigate("/auth/signin", { replace: true });
+      navigate("/auth", { replace: true });
     }
   }, [isLoading, email, navigate]);
 
   const handleSignOut = async () => {
     try {
       await dispatch(logOutUser());
-      navigate("/auth/signin", { replace: true });
+      navigate("/auth", { replace: true });
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -76,12 +76,13 @@ const Permission = () => {
             address: latestUser.address || "",
             userType: latestUser.userType,
             isUpdated: latestUser.isUpdated || false,
-          })
+          }),
         );
         toast.current?.show({
           severity: "success",
           summary: "অভিনন্দন!",
-          detail: "আপনার অ্যাকাউন্ট সক্রিয় হয়েছে! ড্যাশবোর্ডে প্রবেশ করা হচ্ছে...",
+          detail:
+            "আপনার অ্যাকাউন্ট সক্রিয় হয়েছে! ড্যাশবোর্ডে প্রবেশ করা হচ্ছে...",
           life: 2500,
         });
         setTimeout(() => {
@@ -118,7 +119,7 @@ const Permission = () => {
   }
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Admin, I am ${name || "a user"} (${email || ""}). I have registered an account on Rubel Auto portal. Please activate my account.`
+    `Hello Admin, I am ${name || "a user"} (${email || ""}). I have registered an account on Rubel Auto portal. Please activate my account.`,
   );
   const whatsappUrl = `https://api.whatsapp.com/send?phone=8801907093959&text=${whatsappMessage}`;
 
@@ -153,7 +154,9 @@ const Permission = () => {
                 <p className="text-xs font-semibold text-gray-700 leading-none">
                   {name || "ইউজার প্রোফাইল"}
                 </p>
-                <p className="text-[11px] text-gray-400 leading-tight">{email}</p>
+                <p className="text-[11px] text-gray-400 leading-tight">
+                  {email}
+                </p>
               </div>
               {photo ? (
                 <img
@@ -224,7 +227,11 @@ const Permission = () => {
               </span>
             </div>
             <p className="text-sm text-amber-800 leading-relaxed">
-              আপনার অ্যাকাউন্টটি সফলভাবে তৈরি হয়েছে, তবে নিরাপত্তা ও ব্যবস্থাপনার স্বার্থে অ্যাডমিন কর্তৃক অনুমোদন না দেওয়া পর্যন্ত ড্যাশবোর্ড ও অভ্যন্তরীণ ফিচারসমূহ ব্যবহারের অনুমতি দেওয়া যাচ্ছে না। অনুগ্রহ করে অ্যাকাউন্ট সক্রিয় করতে অ্যাডমিনের সাথে যোগাযোগ করুন।
+              আপনার অ্যাকাউন্টটি সফলভাবে তৈরি হয়েছে, তবে নিরাপত্তা ও
+              ব্যবস্থাপনার স্বার্থে অ্যাডমিন কর্তৃক অনুমোদন না দেওয়া পর্যন্ত
+              ড্যাশবোর্ড ও অভ্যন্তরীণ ফিচারসমূহ ব্যবহারের অনুমতি দেওয়া যাচ্ছে
+              না। অনুগ্রহ করে অ্যাকাউন্ট সক্রিয় করতে অ্যাডমিনের সাথে যোগাযোগ
+              করুন।
             </p>
           </div>
         </div>
@@ -253,7 +260,9 @@ const Permission = () => {
             <div className="pt-12 px-6 pb-6">
               <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">{name || "নাম পাওয়া যায়নি"}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {name || "নাম পাওয়া যায়নি"}
+                  </h3>
                   <p className="text-sm text-gray-500">{email}</p>
                 </div>
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-800 border border-yellow-200">
@@ -264,25 +273,33 @@ const Permission = () => {
               {/* Profile Details Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-4 border-y border-gray-100 text-xs">
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                  <span className="text-gray-400 block mb-0.5">মোবাইল নম্বর</span>
+                  <span className="text-gray-400 block mb-0.5">
+                    মোবাইল নম্বর
+                  </span>
                   <span className="font-semibold text-gray-800">
                     {mobile || "দেওয়া হয়নি"}
                   </span>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                  <span className="text-gray-400 block mb-0.5">নিযুক্ত শোরুম</span>
+                  <span className="text-gray-400 block mb-0.5">
+                    নিযুক্ত শোরুম
+                  </span>
                   <span className="font-semibold text-gray-800">
                     {showRoom || "এখনও নির্ধারিত হয়নি"}
                   </span>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                  <span className="text-gray-400 block mb-0.5">পদবী (Designation)</span>
+                  <span className="text-gray-400 block mb-0.5">
+                    পদবী (Designation)
+                  </span>
                   <span className="font-semibold text-gray-800">
                     {designation || "স্টাফ / ব্যবহারকারী"}
                   </span>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                  <span className="text-gray-400 block mb-0.5">রক্তের গ্রুপ</span>
+                  <span className="text-gray-400 block mb-0.5">
+                    রক্তের গ্রুপ
+                  </span>
                   <span className="font-semibold text-gray-800">
                     {bloodGroup || "দেওয়া হয়নি"}
                   </span>
@@ -297,10 +314,24 @@ const Permission = () => {
                   rel="noopener noreferrer"
                   className="flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-sm transition-all hover:shadow active:scale-[0.99]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.5 3.4A12.1 12.1 0 0012 0 12 12 0 001.7 17.8L0 24l6.3-1.7c2.8 1.5 5 1.4 5.8 1.5a12 12 0 008.4-20.3z" fill="#eceff1" />
-                    <path d="M12 21.8c-3.1 0-5.2-1.6-5.4-1.6l-3.7 1 1-3.7-.3-.4A9.9 9.9 0 012.1 12a10 10 0 0117-7 9.9 9.9 0 01-7 16.9z" fill="#25D366" />
-                    <path d="M17.5 14.3c-.3 0-1.8-.8-2-.9-.7-.2-.5 0-1.7 1.3-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5a9 9 0 01-1.7-2c-.3-.6.4-.6 1-1.7l-.1-.5-1-2.2c-.2-.6-.4-.5-.6-.5-.6 0-1 0-1.4.3-1.6 1.8-1.2 3.6.2 5.6 2.7 3.5 4.2 4.2 6.8 5 .7.3 1.4.3 1.9.2.6 0 1.7-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.6-.4z" fill="#fafafa" />
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20.5 3.4A12.1 12.1 0 0012 0 12 12 0 001.7 17.8L0 24l6.3-1.7c2.8 1.5 5 1.4 5.8 1.5a12 12 0 008.4-20.3z"
+                      fill="#eceff1"
+                    />
+                    <path
+                      d="M12 21.8c-3.1 0-5.2-1.6-5.4-1.6l-3.7 1 1-3.7-.3-.4A9.9 9.9 0 012.1 12a10 10 0 0117-7 9.9 9.9 0 01-7 16.9z"
+                      fill="#25D366"
+                    />
+                    <path
+                      d="M17.5 14.3c-.3 0-1.8-.8-2-.9-.7-.2-.5 0-1.7 1.3-.1.2-.3.2-.6.1s-1.3-.5-2.4-1.5a9 9 0 01-1.7-2c-.3-.6.4-.6 1-1.7l-.1-.5-1-2.2c-.2-.6-.4-.5-.6-.5-.6 0-1 0-1.4.3-1.6 1.8-1.2 3.6.2 5.6 2.7 3.5 4.2 4.2 6.8 5 .7.3 1.4.3 1.9.2.6 0 1.7-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"
+                      fill="#fafafa"
+                    />
                   </svg>
                   <span>হোয়াটসঅ্যাপে মেসেজ পাঠান</span>
                 </a>
@@ -325,7 +356,11 @@ const Permission = () => {
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
-                  <span>{isChecking ? "যাচাই করা হচ্ছে..." : "স্ট্যাটাস রিফ্রেশ করুন"}</span>
+                  <span>
+                    {isChecking
+                      ? "যাচাই করা হচ্ছে..."
+                      : "স্ট্যাটাস রিফ্রেশ করুন"}
+                  </span>
                 </button>
               </div>
 
@@ -375,7 +410,8 @@ const Permission = () => {
                       অ্যাডমিনের সাথে যোগাযোগ করুন
                     </h5>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      হোয়াটসঅ্যাপ বাটনে ক্লিক করে বা সরাসরি কল দিয়ে আপনার নাম ও রেজিস্ট্রেশন ইমেইল জানান।
+                      হোয়াটসঅ্যাপ বাটনে ক্লিক করে বা সরাসরি কল দিয়ে আপনার নাম ও
+                      রেজিস্ট্রেশন ইমেইল জানান।
                     </p>
                   </div>
                 </li>
@@ -389,7 +425,8 @@ const Permission = () => {
                       পদবী ও শোরুম নির্ধারণ
                     </h5>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      অ্যাডমিন আপনার তথ্য যাচাই করে পদবী, শোরুম শাখা ও অনুমোদনের অনুমতি প্রদান করবেন।
+                      অ্যাডমিন আপনার তথ্য যাচাই করে পদবী, শোরুম শাখা ও অনুমোদনের
+                      অনুমতি প্রদান করবেন।
                     </p>
                   </div>
                 </li>
@@ -403,7 +440,8 @@ const Permission = () => {
                       স্ট্যাটাস রিফ্রেশ করুন
                     </h5>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      অনুমোদন পাওয়ার পর "স্ট্যাটাস রিফ্রেশ করুন" বাটনে ক্লিক করলে স্বয়ংক্রিয়ভাবে মূল ড্যাশবোর্ডে প্রবেশ করবেন।
+                      অনুমোদন পাওয়ার পর "স্ট্যাটাস রিফ্রেশ করুন" বাটনে ক্লিক
+                      করলে স্বয়ংক্রিয়ভাবে মূল ড্যাশবোর্ডে প্রবেশ করবেন।
                     </p>
                   </div>
                 </li>
@@ -441,10 +479,12 @@ const Permission = () => {
                         >
                           {(u.name || "U")[0]}
                         </div>
-                      )
+                      ),
                     )
                   ) : (
-                    <span className="text-xs text-gray-400">সদস্য তালিকা লোড হচ্ছে...</span>
+                    <span className="text-xs text-gray-400">
+                      সদস্য তালিকা লোড হচ্ছে...
+                    </span>
                   )}
                 </div>
 
@@ -462,7 +502,8 @@ const Permission = () => {
       {/* Footer */}
       <footer className="py-4 border-t border-gray-200 bg-white/50 text-center text-xs text-gray-500">
         <p>
-          © {new Date().getFullYear()} রূবেল অটো (Rubel Auto). সর্বস্বত্ব সংরক্ষিত।
+          © {new Date().getFullYear()} রূবেল অটো (Rubel Auto). সর্বস্বত্ব
+          সংরক্ষিত।
         </p>
       </footer>
     </div>

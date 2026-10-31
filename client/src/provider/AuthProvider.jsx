@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import auth from "./firebase.config";
 import { useDispatch } from "react-redux";
-import { setUser, toggleLoading } from "../redux/feature/user/userSlice";
+import { logOutUser, setUser, toggleLoading } from "../redux/feature/user/userSlice";
 import {
   useGetUserByEmailQuery,
   useSetUserMutation,
@@ -23,6 +23,7 @@ const AuthProvider = ({ children }) => {
       setAuthInitialized(true);
       if (!currentUser) {
         createdRef.current = false;
+        localStorage.removeItem("rubel_session_login_time");
         dispatch(
           setUser({
             name: "",
@@ -142,6 +143,63 @@ const AuthProvider = ({ children }) => {
     createUserInDb,
     dispatch,
   ]);
+
+  // 4. Enforce 1-Hour Automatic Session Logout (3,600,000 ms)
+  useEffect(() => {
+    if (!firebaseUser?.email) {
+      localStorage.removeItem("rubel_session_login_time");
+      return;
+    }
+
+    const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour = 3600000ms
+    let loginTime = localStorage.getItem("rubel_session_login_time");
+
+    if (!loginTime) {
+      loginTime = Date.now().toString();
+      localStorage.setItem("rubel_session_login_time", loginTime);
+    }
+
+    const checkSessionExpiry = () => {
+      const stored = localStorage.getItem("rubel_session_login_time");
+      if (!stored) return;
+      const elapsed = Date.now() - Number(stored);
+      if (elapsed >= ONE_HOUR_MS) {
+        localStorage.removeItem("rubel_session_login_time");
+        dispatch(logOutUser());
+      }
+    };
+
+    const elapsed = Date.now() - Number(loginTime);
+    const remainingTime = Math.max(0, ONE_HOUR_MS - elapsed);
+
+    if (remainingTime <= 0) {
+      checkSessionExpiry();
+      return;
+    }
+
+    // Timer for the exact 1-hour expiration
+    const expiryTimer = setTimeout(() => {
+      checkSessionExpiry();
+    }, remainingTime);
+
+    // Periodic check every 30 seconds (handles system sleep / background tab wake-up)
+    const intervalTimer = setInterval(() => {
+      checkSessionExpiry();
+    }, 30000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkSessionExpiry();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearTimeout(expiryTimer);
+      clearInterval(intervalTimer);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [firebaseUser, dispatch]);
 
   return children;
 };

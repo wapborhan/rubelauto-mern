@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigation } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, useNavigation } from "react-router-dom";
 import MySidebar from "./MySidebar";
 import Header from "./Header";
 import Loading from "../components/shared/Loading";
@@ -12,22 +12,6 @@ const Root = () => {
   const [broken, setBroken] = useState(false);
   const [toggled, setToggled] = useState(false);
   const { isLoading } = useSelector((state) => state.userStore);
-  const location = useLocation();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
-  }, [location]);
-
-  if (loading) {
-    return (
-      <div className="flex w-screen h-screen justify-center items-center">
-        <Loading />
-      </div>
-    );
-  }
 
   return (
     <div id="wrapper" className="flex min-h-screen bg-gray-50">
@@ -56,13 +40,8 @@ const Root = () => {
           broken={broken}
         />
         <main className="flex-1 p-4 md:p-6">
-          {navigation.state === "loading" && (
-            <div className="flex justify-center items-center h-full">
-              <Loading />
-            </div>
-          )}
-          {isLoading ? (
-            <div className="flex justify-center items-center h-full">
+          {navigation.state === "loading" || isLoading ? (
+            <div className="flex justify-center items-center min-h-[350px]">
               <Loading />
             </div>
           ) : (

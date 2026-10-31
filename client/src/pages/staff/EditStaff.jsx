@@ -30,7 +30,6 @@ const EditStaff = () => {
   const [bloodGroup, setBloodGroup] = useState(null);
   const [showRoom, setShowRoom] = useState(null);
   const [userRole, setUserRole] = useState("user");
-  const [isApproved, setIsApproved] = useState(false);
 
   const user = userData?.data;
 
@@ -44,7 +43,6 @@ const EditStaff = () => {
   useEffect(() => {
     if (user) {
       setUserRole(user.userType || "user");
-      setIsApproved(user.isUpdated ?? (user.userType && user.userType !== "user"));
 
       if (bloodGroupList?.length) {
         const bg = bloodGroupList.find(
@@ -78,7 +76,7 @@ const EditStaff = () => {
       address: formData.address.trim(),
       bloodGroup: bloodGroup?.code || bloodGroup?.name || user?.bloodGroup || "",
       userType: userRole,
-      isUpdated: isApproved || userRole !== "user",
+      isUpdated: userRole !== "user",
     };
 
     setUser({ email, userInfo });
@@ -155,10 +153,10 @@ const EditStaff = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>স্টাফ অনুমোদন ও প্রোফাইল সম্পাদনা</span>
+            <span>স্টাফ প্রোফাইল ও ভূমিকা সম্পাদনা</span>
           </h1>
           <p className="text-xs text-gray-500 mt-1">
-            কর্মকর্তা ও কর্মচারীদের রোল, অনুমোদন, পদবী ও শোরুম শাখা নির্ধারণ করুন
+            কর্মকর্তা ও কর্মচারীদের রোল, পদবী, শোরুম শাখা ও ব্যক্তিগত তথ্য নির্ধারণ করুন
           </p>
         </div>
         <Link
@@ -186,82 +184,71 @@ const EditStaff = () => {
       {/* Form Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 space-y-8">
-          {/* Section 1: রোল ও অ্যাকাউন্ট অনুমোদন (Admin Only) */}
+          {/* Section 1: রোল ও অ্যাক্সেস নিয়ন্ত্রণ (Admin Only) */}
           <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-sky-50/70 border border-blue-200/80 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-blue-200/50">
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs">
-                ১
-              </span>
-              <div>
-                <h2 className="text-base font-bold text-blue-950">
-                  অ্যাকাউন্ট রোল ও অনুমোদন (Role & Approval)
-                </h2>
-                <p className="text-[11px] text-blue-700">
-                  অ্যাডমিন ব্যতীত অন্য কোনো স্টাফ এই রোল পরিবর্তন করতে পারবে না
-                </p>
+            <div className="flex items-center justify-between pb-2 border-b border-blue-200/50">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs">
+                  ১
+                </span>
+                <div>
+                  <h2 className="text-base font-bold text-blue-950">
+                    অ্যাকাউন্ট ভূমিকা / রোল (Role & Permission)
+                  </h2>
+                  <p className="text-[11px] text-blue-700">
+                    অ্যাডমিন ব্যতীত অন্য কোনো স্টাফ এই রোল পরিবর্তন করতে পারবে না
+                  </p>
+                </div>
               </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white shadow-xs">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                <span>অ্যাডমিন নিয়ন্ত্রণ</span>
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  সিস্টেমের ভূমিকা / রোল (User Role) <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={userRole}
-                  onChange={(e) => {
-                    const newRole = e.target.value;
-                    setUserRole(newRole);
-                    if (newRole !== "user") {
-                      setIsApproved(true);
-                    }
-                  }}
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white border border-blue-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 font-semibold text-gray-800 outline-none shadow-sm"
-                >
-                  <option value="user">ব্যবহারকারী — অননুমোদিত (Pending User)</option>
-                  <option value="staff">স্টাফ — শোরুম ও অপারেশনাল অ্যাক্সেস (Staff)</option>
-                  <option value="admin">সিস্টেম অ্যাডমিন — সকল পারমিশন (Admin)</option>
-                </select>
-                <p className="text-[11px] text-gray-500 mt-1">
-                  {userRole === "user" && (
-                    <span className="text-amber-700 font-medium">
-                      ⚠️ অননুমোদিত: এই ইউজার ড্যাশবোর্ডে প্রবেশ করতে পারবে না (Permission পেজে রিডাইরেক্ট হবে)।
-                    </span>
-                  )}
-                  {userRole === "staff" && (
-                    <span className="text-emerald-700 font-medium">
-                      ✓ স্টাফ: ড্যাশবোর্ড, সেলস, কাস্টমার, স্টক ও নির্ধারিত শোরুমের কাজ করতে পারবে।
-                    </span>
-                  )}
-                  {userRole === "admin" && (
-                    <span className="text-blue-700 font-bold">
-                      ★ অ্যাডমিন: সম্পূর্ণ সিস্টেম, ইউজার অনুমোদন ও সেটিংস পরিবর্তনের পূর্ণ অনুমতি পাবে।
-                    </span>
-                  )}
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-center">
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  অ্যাকাউন্ট সক্রিয়করণ স্ট্যাটাস
-                </label>
-                <label className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
-                  <input
-                    type="checkbox"
-                    checked={isApproved}
-                    onChange={(e) => setIsApproved(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <div className="text-xs">
-                    <span className="font-bold text-gray-800 block">
-                      অ্যাকাউন্ট সক্রিয় ও অনুমোদিত (Active & Approved)
-                    </span>
-                    <span className="text-[11px] text-gray-400">
-                      টিক চিহ্ন দেওয়া থাকলে ইউজার সফলভাবে লগইন করতে পারবেন
-                    </span>
-                  </div>
-                </label>
-              </div>
+            <div className="pt-1 max-w-xl">
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                সিস্টেমের ভূমিকা / রোল (User Role) <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={userRole}
+                onChange={(e) => setUserRole(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white border border-blue-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 font-semibold text-gray-800 outline-none shadow-sm"
+              >
+                <option value="user">ব্যবহারকারী — অননুমোদিত (Pending User)</option>
+                <option value="staff">স্টাফ — শোরুম ও অপারেশনাল অ্যাক্সেস (Staff)</option>
+                <option value="admin">সিস্টেম অ্যাডমিন — সকল পারমিশন (Admin)</option>
+              </select>
+              <p className="text-[11px] text-gray-500 mt-1.5">
+                {userRole === "user" && (
+                  <span className="text-amber-700 font-medium flex items-center gap-1">
+                    <span>⚠️</span> অননুমোদিত: এই ইউজার ড্যাশবোর্ডে প্রবেশ করতে পারবে না (Permission পেজে রিডাইরেক্ট হবে)।
+                  </span>
+                )}
+                {userRole === "staff" && (
+                  <span className="text-emerald-700 font-medium flex items-center gap-1">
+                    <span>✓</span> স্টাফ: ড্যাশবোর্ড, সেলস, কাস্টমার, স্টক ও নির্ধারিত শোরুমের কাজ করতে পারবে।
+                  </span>
+                )}
+                {userRole === "admin" && (
+                  <span className="text-blue-700 font-bold flex items-center gap-1">
+                    <span>★</span> অ্যাডমিন: সম্পূর্ণ সিস্টেম, ইউজার অনুমোদন ও সেটিংস পরিবর্তনের পূর্ণ অনুমতি পাবে।
+                  </span>
+                )}
+              </p>
             </div>
           </div>
 

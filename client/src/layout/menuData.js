@@ -147,11 +147,7 @@ export const menuData = [
       },
     ],
   },
-  {
-    label: "কর্মচারিবৃন্দ",
-    icon: "pi-user-plus",
-    path: "/staff",
-  },
+
   {
     label: "Report",
     icon: "pi-database",
@@ -163,7 +159,7 @@ export const menuData = [
     ],
   },
   {
-    label: "অ্যাপ সেতিংস",
+    label: "অ্যাপ সেটিংস",
     icon: "pi-cog",
     subMenu: [
       {
@@ -173,6 +169,10 @@ export const menuData = [
       {
         label: "শোরুমের তালিকা",
         path: "/showroom/list",
+      },
+      {
+        label: "কর্মচারিবৃন্দ",
+        path: "/staff",
       },
     ],
   },

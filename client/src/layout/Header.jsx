@@ -3,17 +3,11 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutUser } from "../redux/feature/user/userSlice";
 
-const Header = ({
-  collapsed,
-  setCollapsed,
-  broken,
-  setToggled,
-  toggled,
-}) => {
+const Header = ({ collapsed, setCollapsed, broken, setToggled, toggled }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { name, photo, showRoom, designation, email, userType } = useSelector(
-    (state) => state.userStore
+    (state) => state.userStore,
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -22,7 +16,7 @@ const Header = ({
     setDropdownOpen(false);
     try {
       await dispatch(logOutUser());
-      navigate("/auth/signin");
+      navigate("/auth");
     } catch (error) {
       console.error("Sign out error:", error);
     }

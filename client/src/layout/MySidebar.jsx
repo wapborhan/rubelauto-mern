@@ -14,7 +14,7 @@ const MySidebar = ({ collapsed, setBroken, setToggled, toggled, broken }) => {
   const filteredMenu = useMemo(() => {
     if (showRoom === "Parts" && userType !== "admin") {
       return menuData.filter((item) =>
-        ["পার্টস", "ড্যাশবোর্ড", "অ্যাপ সেতিংস"].includes(item.label)
+        ["পার্টস", "ড্যাশবোর্ড", "অ্যাপ সেটিংস"].includes(item.label),
       );
     }
     return menuData;
@@ -25,7 +25,7 @@ const MySidebar = ({ collapsed, setBroken, setToggled, toggled, broken }) => {
     filteredMenu.forEach((item, index) => {
       if (item.subMenu) {
         const isMatch = item.subMenu.some(
-          (subItem) => location.pathname === subItem.path
+          (subItem) => location.pathname === subItem.path,
         );
         if (isMatch) {
           setOpenSubMenu(index);
@@ -140,7 +140,7 @@ const MySidebar = ({ collapsed, setBroken, setToggled, toggled, broken }) => {
             {filteredMenu.map((item, index) => {
               if (item.subMenu) {
                 const isSubActive = item.subMenu.some(
-                  (subItem) => location.pathname === subItem.path
+                  (subItem) => location.pathname === subItem.path,
                 );
 
                 return (

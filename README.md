@@ -326,7 +326,7 @@ All backend routes are prefixed with `/api`:
 
 - **Token Persistence**: Firebase securely preserves session tokens across page reloads.
 - **Profile Synchronization**: [`AuthProvider`](client/src/provider/AuthProvider.jsx) synchronizes Firebase auth state with MongoDB user profiles and privileges in Redux.
-- **Route Guard**: [`PrivateRoute`](client/src/provider/PrivateRoute.jsx) ensures unauthenticated or unauthorized users are safely redirected to `/auth/signin`.
+- **Route Guard**: [`PrivateRoute`](client/src/provider/PrivateRoute.jsx) ensures unauthenticated or unauthorized users are safely redirected to `/auth`.
 
 ---
 

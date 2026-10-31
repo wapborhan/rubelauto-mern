@@ -11,16 +11,11 @@ const PrivateRoute = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { email, isUpdated, userType, isLoading } = useSelector(
-    (state) => state.userStore
+    (state) => state.userStore,
   );
 
   useEffect(() => {
-    if (
-      toast.current &&
-      email &&
-      !isUpdated &&
-      location.pathname !== "/auth/signin"
-    ) {
+    if (toast.current && email && !isUpdated && location.pathname !== "/auth") {
       toast.current.show({
         severity: "error",
         summary: "নোটিশ",
@@ -92,7 +87,7 @@ const PrivateRoute = ({ children }) => {
             }),
           }}
         />
-        <Navigate to="/auth/signin" state={{ from: location.pathname }} replace />
+        <Navigate to="/auth" state={{ from: location.pathname }} replace />
       </>
     );
   }
