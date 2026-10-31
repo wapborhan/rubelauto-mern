@@ -2,35 +2,20 @@ import { createBrowserRouter } from "react-router-dom";
 import * as All from "../pages";
 import Redirect from "../pages/Redirect";
 import Root from "../layout/Root";
-import SignIn from "../layout/signin/SignIn";
-import SignUp from "../layout/signup/SignUp";
 import PrivateRoute from "../provider/PrivateRoute";
-import AuthLay from "../layout/AuthLay";
-import ForgotPassword from "../layout/forgot-password/ForgotPassword";
+import Permission from "../layout/auth/Permission";
+import Auth from "../layout/auth/Auth";
+import ErrorPage from "../components/shared/ErrorPage";
 
 const routes = createBrowserRouter([
   {
     path: "/",
     element: <Redirect />,
-    errorElement: "Error",
+    errorElement: <ErrorPage />,
   },
   {
     path: "/auth",
-    element: <AuthLay />,
-    children: [
-      {
-        path: "signin",
-        element: <SignIn />,
-      },
-      {
-        path: "signup",
-        element: <SignUp />,
-      },
-      {
-        path: "forgot-password",
-        element: <ForgotPassword />,
-      },
-    ],
+    element: <Auth />,
   },
   {
     path: "/",
@@ -39,7 +24,7 @@ const routes = createBrowserRouter([
         <Root />
       </PrivateRoute>
     ),
-    errorElement: "Error",
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/dashboard",
@@ -246,14 +231,10 @@ const routes = createBrowserRouter([
       // Staff
       {
         path: "/staff",
-        errorElement: "404",
+        errorElement: <ErrorPage notFound />,
         children: [
           {
-            path: "add",
-            element: "Under Constraction",
-          },
-          {
-            path: "view",
+            path: "",
             element: <All.ViewStaff />,
           },
           {
@@ -265,7 +246,7 @@ const routes = createBrowserRouter([
       // Profile
       {
         path: "/profile",
-        errorElement: "404",
+        errorElement: <ErrorPage notFound />,
         // element: <StaffDetails />,
         children: [
           {
@@ -288,6 +269,14 @@ const routes = createBrowserRouter([
     path: "/memo",
     element: <Root />,
     children: [{ path: "", element: <All.Memo /> }],
+  },
+  {
+    path: "/permission",
+    element: <Permission />,
+  },
+  {
+    path: "*",
+    element: <ErrorPage notFound />,
   },
 ]);
 

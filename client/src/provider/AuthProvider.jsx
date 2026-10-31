@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import auth from "./firebase.config";
 import { useDispatch } from "react-redux";
 import { setUser, toggleLoading } from "../redux/feature/user/userSlice";
-import { useGetUserByEmailQuery } from "../redux/feature/api/userApi";
+import {
+  useGetUserByEmailQuery,
+  useSetUserMutation,
+} from "../redux/feature/api/userApi";
 
 const AuthProvider = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [authInitialized, setAuthInitialized] = useState(false);
   const dispatch = useDispatch();
+  const [createUserInDb] = useSetUserMutation();
+  const createdRef = useRef(false);
 
   // 1. Listen to Firebase auth state changes
   useEffect(() => {
@@ -17,6 +22,7 @@ const AuthProvider = ({ children }) => {
       setFirebaseUser(currentUser);
       setAuthInitialized(true);
       if (!currentUser) {
+        createdRef.current = false;
         dispatch(
           setUser({
             name: "",
@@ -67,31 +73,48 @@ const AuthProvider = ({ children }) => {
             designation: user.data.designation || "",
             bloodGroup: user.data.bloodGroup || "",
             address: user.data.address || "",
-            userType: user.data.userType || "",
+            userType: user.data.userType || "user",
             isUpdated: user.data.isUpdated || false,
           })
         );
       } else {
-        // Fallback: in case MongoDB doesn't have the profile document yet
-        dispatch(
-          setUser({
-            name: firebaseUser.displayName || "",
+        // Auto-register first time Google user in MongoDB with default role 'user'
+        if (!createdRef.current && firebaseUser.email) {
+          createdRef.current = true;
+          const newUserData = {
+            name: firebaseUser.displayName || "Google User",
             photo: firebaseUser.photoURL || "",
-            email: firebaseUser.email || "",
-            joinDate: "",
+            email: firebaseUser.email,
+            joinDate: new Date(),
             mobile: "",
             showRoom: "",
             designation: "",
             bloodGroup: "",
             address: "",
-            userType: "",
+            userType: "user",
+            isUpdated: false,
+          };
+          createUserInDb(newUserData);
+        }
+
+        dispatch(
+          setUser({
+            name: firebaseUser.displayName || "",
+            photo: firebaseUser.photoURL || "",
+            email: firebaseUser.email || "",
+            joinDate: new Date().toISOString(),
+            mobile: "",
+            showRoom: "",
+            designation: "",
+            bloodGroup: "",
+            address: "",
+            userType: "user",
             isUpdated: false,
           })
         );
       }
       dispatch(toggleLoading(false));
     } else if (isError) {
-      // If backend request fails, fall back to Firebase basic user data
       dispatch(
         setUser({
           name: firebaseUser.displayName || "",
@@ -103,7 +126,7 @@ const AuthProvider = ({ children }) => {
           designation: "",
           bloodGroup: "",
           address: "",
-          userType: "",
+          userType: "user",
           isUpdated: false,
         })
       );
@@ -116,6 +139,7 @@ const AuthProvider = ({ children }) => {
     isUserLoading,
     isUserFetching,
     isError,
+    createUserInDb,
     dispatch,
   ]);
 

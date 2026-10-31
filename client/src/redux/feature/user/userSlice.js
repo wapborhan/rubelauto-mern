@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -26,6 +28,20 @@ const initialState = {
   errorMessage: null,
 };
 
+export const loginWithGoogle = createAsyncThunk(
+  "userSlice/loginWithGoogle",
+  async (_, { rejectWithValue }) => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      return result.user;
+    } catch (error) {
+      console.error("Google sign in error:", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const createUser = createAsyncThunk(
   "userSlice/createUser",
   async ({ name, email, photoURL, password }) => {
@@ -40,7 +56,7 @@ export const createUser = createAsyncThunk(
       photo: data?.user?.photoURL,
       email: data?.user?.email,
     };
-  },
+  }
 );
 
 export const loginUser = createAsyncThunk(
@@ -49,23 +65,16 @@ export const loginUser = createAsyncThunk(
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password,
+      password
     );
 
     return userCredential.user;
-  },
+  }
 );
 
 export const logOutUser = createAsyncThunk("userSlice/logOutUser", async () => {
   await signOut(auth);
 });
-
-// export const forgotPassword = createAsyncThunk(
-//   "userSlice/forgotPassword",
-//   async (email) => {
-//     await sendPasswordResetEmail(auth, email);
-//   },
-// );
 
 export const forgotPassword = createAsyncThunk(
   "userSlice/forgotPassword",
@@ -80,7 +89,7 @@ export const forgotPassword = createAsyncThunk(
       console.error("Firebase error:", error.code, error.message);
       return rejectWithValue(error.message);
     }
-  },
+  }
 );
 
 const userSlice = createSlice({
@@ -108,6 +117,24 @@ const userSlice = createSlice({
     builder.addCase("persist/REHYDRATE", (state) => {
       state.isLoading = true;
     });
+    builder
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.errorMessage = "";
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, { payload }) => {
+        state.name = payload?.displayName || payload?.name || "";
+        state.photo = payload?.photoURL || payload?.photo || "";
+        state.email = payload?.email || "";
+        state.isLoading = false;
+        state.isError = false;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload || action.error?.message;
+      });
     builder
       .addCase(createUser.pending, (state) => {
         state.name = "";

@@ -11,7 +11,7 @@ const PrivateRoute = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { email, isUpdated, userType, isLoading } = useSelector(
-    (state) => state.userStore,
+    (state) => state.userStore
   );
 
   useEffect(() => {
@@ -32,8 +32,8 @@ const PrivateRoute = ({ children }) => {
             আপনার প্রোফাইল একটিভ নেই, একটিভ করতে আপনার হেড অফিসে
             <div className="message">
               <a
-                href="https:api.whatsapp.com/send?phone=8801907093959&text=Need to Acive my Account."
-                className="blantershow-chat flex gap-2 border-2 rounded-full py-2 px-5 cursor-pointer hover:bg-green-600 hover:text-white  transition-all"
+                href="https://api.whatsapp.com/send?phone=8801907093959&text=Need%20to%20Active%20my%20Account."
+                className="blantershow-chat flex gap-2 border-2 rounded-full py-2 px-5 cursor-pointer hover:bg-green-600 hover:text-white transition-all"
                 style={{
                   display: "flex",
                   gap: "10px",
@@ -45,7 +45,8 @@ const PrivateRoute = ({ children }) => {
                   margin: "20px auto",
                 }}
                 title="Show Chat"
-                target="__BLANK"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <svg width="20" viewBox="0 0 24 24">
                   <defs />
@@ -68,16 +69,8 @@ const PrivateRoute = ({ children }) => {
           </>
         ),
       });
-
-      // dispatch(logOutUser());
     }
   }, [isUpdated, dispatch, location.pathname, email]);
-
-  useEffect(() => {
-    if (userType === "user" && location.pathname !== "/profile/edit") {
-      navigate("/profile/edit");
-    }
-  }, [userType, isUpdated, navigate, location.pathname]);
 
   if (isLoading) {
     return (
@@ -87,23 +80,29 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (email) {
-    return children;
+  // If user is not logged in, redirect to signin
+  if (!email) {
+    return (
+      <>
+        <Toast
+          ref={toast}
+          pt={{
+            message: ({ index }) => ({
+              className: `bg-yellow-${((index > 5 && 5) || index || 1) * 100}`,
+            }),
+          }}
+        />
+        <Navigate to="/auth/signin" state={{ from: location.pathname }} replace />
+      </>
+    );
   }
 
-  return (
-    <>
-      <Toast
-        ref={toast}
-        pt={{
-          message: ({ index }) => ({
-            className: `bg-yellow-${((index > 5 && 5) || index || 1) * 100}`,
-          }),
-        }}
-      />
-      <Navigate to="/auth/signin" state={{ from: location.pathname }} replace />
-    </>
-  );
+  // If user has not been approved ('user' type), redirect to permission page
+  if (userType === "user") {
+    return <Navigate to="/permission" replace />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

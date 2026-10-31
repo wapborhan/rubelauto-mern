@@ -5,7 +5,36 @@ exports.createUser = async (req, res, next) => {
   try {
     const user = req.body;
 
-    const newUser = new Users(user);
+    if (!user.email) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: "Email is required to create a user",
+        data: {},
+      });
+    }
+
+    const emailFilter = {
+      email: { $regex: new RegExp(`^${user.email.trim()}$`, "i") },
+    };
+
+    // Check if user already exists in DB to prevent duplicate accounts
+    const existingUser = await Users.findOne(emailFilter);
+    if (existingUser) {
+      return res.status(200).json({
+        success: true,
+        status: 200,
+        message: "User already exists",
+        data: existingUser,
+      });
+    }
+
+    const newUser = new Users({
+      ...user,
+      email: user.email.trim().toLowerCase(),
+      userType: user.userType || "user",
+      isUpdated: user.isUpdated ?? false,
+    });
     const data = await newUser.save();
 
     res.status(200).json({
@@ -81,6 +110,7 @@ exports.updateUser = async (req, res, next) => {
       designation,
       address,
       bloodGroup,
+      userType,
       isUpdated,
     } = updateData;
 
@@ -88,20 +118,24 @@ exports.updateUser = async (req, res, next) => {
       ? { email: { $regex: new RegExp(`^${email.trim()}$`, "i") } }
       : {};
 
+    const updateFields = {
+      name: name,
+      photo: photo,
+      mobile: mobile,
+      showRoom: showRoom,
+      designation: designation,
+      address: address,
+      bloodGroup: bloodGroup,
+      isUpdated: isUpdated,
+    };
+
+    if (userType !== undefined) {
+      updateFields.userType = userType;
+    }
+
     const data = await Users.findOneAndUpdate(
       filter,
-      {
-        $set: {
-          name: name,
-          photo: photo,
-          mobile: mobile,
-          showRoom: showRoom,
-          designation: designation,
-          address: address,
-          bloodGroup: bloodGroup,
-          isUpdated: isUpdated,
-        },
-      },
+      { $set: updateFields },
       { new: true }
     );
 

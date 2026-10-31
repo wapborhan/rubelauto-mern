@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Toast } from "primereact/toast";
+import { useSelector } from "react-redux";
 import useBloodGroupList from "../../hooks/data/useBloodGroupList";
 import { useGetShowroomQuery } from "../../redux/feature/api/showroomApi";
 import useDesignationList from "../../hooks/data/useDesignationList";
@@ -16,6 +17,8 @@ const EditStaff = () => {
   const navigate = useNavigate();
   const { email } = useParams();
 
+  const { userType: currentUserType } = useSelector((state) => state.userStore);
+
   const [bloodGroupList] = useBloodGroupList();
   const [designationList] = useDesignationList();
   const { data: showRooms, isLoading: isShowroomLoading } = useGetShowroomQuery();
@@ -26,6 +29,8 @@ const EditStaff = () => {
   const [designation, setDesignation] = useState(null);
   const [bloodGroup, setBloodGroup] = useState(null);
   const [showRoom, setShowRoom] = useState(null);
+  const [userRole, setUserRole] = useState("user");
+  const [isApproved, setIsApproved] = useState(false);
 
   const user = userData?.data;
 
@@ -35,29 +40,35 @@ const EditStaff = () => {
     formState: { errors },
   } = useForm();
 
-  // Pre-populate selects
+  // Pre-populate selects & role
   useEffect(() => {
-    if (user && bloodGroupList?.length) {
-      const bg = bloodGroupList.find(
-        (b) => b.code === user.bloodGroup || b.name === user.bloodGroup
-      );
-      if (bg) setBloodGroup(bg);
-    }
-    if (user && designationList?.length) {
-      const des = designationList.find(
-        (d) => d.code === user.designation || d.name === user.designation
-      );
-      if (des) setDesignation(des);
-    }
-    if (user && showRooms?.length) {
-      const sr = showRooms.find(
-        (s) => s.name === user.showRoom || s.code === user.showRoom
-      );
-      if (sr) setShowRoom(sr);
+    if (user) {
+      setUserRole(user.userType || "user");
+      setIsApproved(user.isUpdated ?? (user.userType && user.userType !== "user"));
+
+      if (bloodGroupList?.length) {
+        const bg = bloodGroupList.find(
+          (b) => b.code === user.bloodGroup || b.name === user.bloodGroup
+        );
+        if (bg) setBloodGroup(bg);
+      }
+      if (designationList?.length) {
+        const des = designationList.find(
+          (d) => d.code === user.designation || d.name === user.designation
+        );
+        if (des) setDesignation(des);
+      }
+      if (showRooms?.length) {
+        const sr = showRooms.find(
+          (s) => s.name === user.showRoom || s.code === user.showRoom
+        );
+        if (sr) setShowRoom(sr);
+      }
     }
   }, [user, bloodGroupList, designationList, showRooms]);
 
   const onSubmit = (formData) => {
+    // Only admin can change userType and approve
     const userInfo = {
       name: formData.name.trim(),
       photo: formData.photoURL?.trim() || user?.photo || "",
@@ -66,7 +77,8 @@ const EditStaff = () => {
       designation: designation?.code || designation?.name || user?.designation || "",
       address: formData.address.trim(),
       bloodGroup: bloodGroup?.code || bloodGroup?.name || user?.bloodGroup || "",
-      isUpdated: true,
+      userType: userRole,
+      isUpdated: isApproved || userRole !== "user",
     };
 
     setUser({ email, userInfo });
@@ -77,11 +89,11 @@ const EditStaff = () => {
       toast.current.show({
         severity: "success",
         summary: "সফল",
-        detail: "স্টাফ প্রোফাইল সফলভাবে আপডেট করা হয়েছে",
+        detail: "স্টাফ তথ্য ও রোল সফলভাবে আপডেট করা হয়েছে",
         life: 2000,
       });
       setTimeout(() => {
-        navigate("/staff");
+        navigate("/staff/view");
       }, 1500);
     }
   }, [isSuccess, navigate]);
@@ -89,7 +101,7 @@ const EditStaff = () => {
   useEffect(() => {
     if (isError) {
       const errorMsg =
-        error?.data?.message || error?.error || "প্রোফাইল আপডেট করতে সমস্যা হয়েছে";
+        error?.data?.message || error?.error || "স্টাফ তথ্য আপডেট করতে সমস্যা হয়েছে";
       toast.current.show({
         severity: "error",
         summary: "ত্রুটি",
@@ -101,40 +113,165 @@ const EditStaff = () => {
 
   if (isUserLoading || isShowroomLoading) return <Loading />;
 
+  // Permission Guard: Only Admin can access EditStaff
+  if (currentUserType !== "admin") {
+    return (
+      <div className="max-w-lg mx-auto my-12 p-8 bg-white rounded-2xl border border-red-200 text-center space-y-4 shadow-sm">
+        <div className="w-16 h-16 rounded-full bg-red-50 text-red-500 mx-auto flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-8 h-8"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-800">অননুমোদিত অ্যাক্সেস</h2>
+        <p className="text-xs text-gray-500 leading-relaxed">
+          কেবলমাত্র <strong>সিস্টেম অ্যাডমিন</strong> কর্মকর্তা ও স্টাফদের রোল পরিবর্তন এবং অনুমোদন করতে পারবেন।
+        </p>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="px-5 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all"
+        >
+          ড্যাশবোর্ডে ফিরে যান
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto space-y-6 pb-12">
       <Toast ref={toast} />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <i className="pi pi-user-edit text-blue-600 text-xl"></i>
-            স্টাফ প্রোফাইল সম্পাদনা (Edit Staff)
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <span>স্টাফ অনুমোদন ও প্রোফাইল সম্পাদনা</span>
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            কর্মকর্তা ও কর্মচারীদের পদবি, শোরুম ও ব্যক্তিগত বিবরণ আপডেট করুন
+          <p className="text-xs text-gray-500 mt-1">
+            কর্মকর্তা ও কর্মচারীদের রোল, অনুমোদন, পদবী ও শোরুম শাখা নির্ধারণ করুন
           </p>
         </div>
         <Link
-          to="/staff"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          to="/staff/view"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
         >
-          <i className="pi pi-arrow-left text-xs"></i>
-          স্টাফ তালিকা
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-3.5 h-3.5 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span>স্টাফ তালিকা</span>
         </Link>
       </div>
 
       {/* Form Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 space-y-8">
-          {/* Section 1: ব্যক্তিগত তথ্য */}
-          <div>
-            <div className="flex items-center gap-2 pb-3 mb-5 border-b border-gray-100">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-600 font-bold text-xs">
+          {/* Section 1: রোল ও অ্যাকাউন্ট অনুমোদন (Admin Only) */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-sky-50/70 border border-blue-200/80 space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-blue-200/50">
+              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs">
                 ১
               </span>
-              <h2 className="text-base font-semibold text-gray-800">
+              <div>
+                <h2 className="text-base font-bold text-blue-950">
+                  অ্যাকাউন্ট রোল ও অনুমোদন (Role & Approval)
+                </h2>
+                <p className="text-[11px] text-blue-700">
+                  অ্যাডমিন ব্যতীত অন্য কোনো স্টাফ এই রোল পরিবর্তন করতে পারবে না
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                  সিস্টেমের ভূমিকা / রোল (User Role) <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={userRole}
+                  onChange={(e) => {
+                    const newRole = e.target.value;
+                    setUserRole(newRole);
+                    if (newRole !== "user") {
+                      setIsApproved(true);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white border border-blue-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 font-semibold text-gray-800 outline-none shadow-sm"
+                >
+                  <option value="user">ব্যবহারকারী — অননুমোদিত (Pending User)</option>
+                  <option value="staff">স্টাফ — শোরুম ও অপারেশনাল অ্যাক্সেস (Staff)</option>
+                  <option value="admin">সিস্টেম অ্যাডমিন — সকল পারমিশন (Admin)</option>
+                </select>
+                <p className="text-[11px] text-gray-500 mt-1">
+                  {userRole === "user" && (
+                    <span className="text-amber-700 font-medium">
+                      ⚠️ অননুমোদিত: এই ইউজার ড্যাশবোর্ডে প্রবেশ করতে পারবে না (Permission পেজে রিডাইরেক্ট হবে)।
+                    </span>
+                  )}
+                  {userRole === "staff" && (
+                    <span className="text-emerald-700 font-medium">
+                      ✓ স্টাফ: ড্যাশবোর্ড, সেলস, কাস্টমার, স্টক ও নির্ধারিত শোরুমের কাজ করতে পারবে।
+                    </span>
+                  )}
+                  {userRole === "admin" && (
+                    <span className="text-blue-700 font-bold">
+                      ★ অ্যাডমিন: সম্পূর্ণ সিস্টেম, ইউজার অনুমোদন ও সেটিংস পরিবর্তনের পূর্ণ অনুমতি পাবে।
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                  অ্যাকাউন্ট সক্রিয়করণ স্ট্যাটাস
+                </label>
+                <label className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+                  <input
+                    type="checkbox"
+                    checked={isApproved}
+                    onChange={(e) => setIsApproved(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <div className="text-xs">
+                    <span className="font-bold text-gray-800 block">
+                      অ্যাকাউন্ট সক্রিয় ও অনুমোদিত (Active & Approved)
+                    </span>
+                    <span className="text-[11px] text-gray-400">
+                      টিক চিহ্ন দেওয়া থাকলে ইউজার সফলভাবে লগইন করতে পারবেন
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: ব্যক্তিগত তথ্য */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 text-gray-700 font-bold text-xs">
+                ২
+              </span>
+              <h2 className="text-base font-bold text-gray-900">
                 ব্যক্তিগত তথ্য (Personal Details)
               </h2>
             </div>
@@ -149,7 +286,7 @@ const EditStaff = () => {
                   defaultValue={user?.name || ""}
                   placeholder="স্টাফের নাম"
                   {...register("name", { required: "নাম আবশ্যক" })}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                 />
                 {errors.name && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -166,7 +303,7 @@ const EditStaff = () => {
                   type="email"
                   value={email || user?.email || ""}
                   disabled
-                  className="w-full px-3.5 py-2 text-sm bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed outline-none"
                 />
               </div>
 
@@ -179,7 +316,7 @@ const EditStaff = () => {
                   defaultValue={user?.mobile || ""}
                   placeholder="017XXXXXXXX"
                   {...register("mobile", { required: "মোবাইল নম্বর আবশ্যক" })}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                 />
                 {errors.mobile && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -198,7 +335,7 @@ const EditStaff = () => {
                     const found = bloodGroupList?.find((b) => b.code === e.target.value);
                     setBloodGroup(found || (e.target.value ? { code: e.target.value } : null));
                   }}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                 >
                   <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
                   {(bloodGroupList || []).map((bg) => (
@@ -218,7 +355,7 @@ const EditStaff = () => {
                   defaultValue={user?.photo || ""}
                   placeholder="https://example.com/photo.jpg"
                   {...register("photoURL")}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                 />
               </div>
 
@@ -231,7 +368,7 @@ const EditStaff = () => {
                   defaultValue={user?.address || ""}
                   placeholder="স্থায়ী বা বর্তমান ঠিকানা"
                   {...register("address", { required: "ঠিকানা আবশ্যক" })}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none resize-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none resize-none"
                 />
                 {errors.address && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -242,13 +379,13 @@ const EditStaff = () => {
             </div>
           </div>
 
-          {/* Section 2: প্রাতিষ্ঠানিক তথ্য */}
-          <div>
-            <div className="flex items-center gap-2 pb-3 mb-5 border-b border-gray-100">
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-600 font-bold text-xs">
-                ২
+          {/* Section 3: প্রাতিষ্ঠানিক পদবী ও শোরুম */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 text-gray-700 font-bold text-xs">
+                ৩
               </span>
-              <h2 className="text-base font-semibold text-gray-800">
+              <h2 className="text-base font-bold text-gray-900">
                 প্রাতিষ্ঠানিক পদবী ও শোরুম (Official Assignment)
               </h2>
             </div>
@@ -264,7 +401,7 @@ const EditStaff = () => {
                     const found = showRooms?.find((s) => s.name === e.target.value);
                     setShowRoom(found || (e.target.value ? { name: e.target.value } : null));
                   }}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                   required
                 >
                   <option value="">শোরুম নির্বাচন করুন</option>
@@ -286,7 +423,7 @@ const EditStaff = () => {
                     const found = designationList?.find((d) => d.code === e.target.value);
                     setDesignation(found || (e.target.value ? { code: e.target.value } : null));
                   }}
-                  className="w-full px-3.5 py-2 text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm bg-gray-50/50 border border-gray-300 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                   required
                 >
                   <option value="">পদবী নির্বাচন করুন</option>
@@ -303,26 +440,42 @@ const EditStaff = () => {
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <Link
-              to="/staff"
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              to="/staff/view"
+              className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               বাতিল
             </Link>
             <button
               type="submit"
               disabled={isUpdating}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUpdating ? (
                 <>
-                  <i className="pi pi-spin pi-spinner text-sm"></i>
-                  সংরক্ষণ করা হচ্ছে...
+                  <svg
+                    className="animate-spin w-4 h-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  <span>সংরক্ষণ করা হচ্ছে...</span>
                 </>
               ) : (
-                <>
-                  <i className="pi pi-check text-sm"></i>
-                  প্রোফাইল আপডেট করুন
-                </>
+                <span>রোল ও তথ্য সংরক্ষণ করুন</span>
               )}
             </button>
           </div>

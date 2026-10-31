@@ -86,13 +86,14 @@ export const menuData = [
       {
         label: "জব্দকৃত",
         path: "/customer/seized",
-      }, {
-    label: "ডকুমেন্টস ",
-    path: "/documents",
-  },
+      },
+      {
+        label: "ডকুমেন্টস ",
+        path: "/documents",
+      },
     ],
   },
- 
+
   {
     label: "পার্টস",
     icon: "pi-wrench",
@@ -149,7 +150,7 @@ export const menuData = [
   {
     label: "কর্মচারিবৃন্দ",
     icon: "pi-user-plus",
-    path: "/staff/view",
+    path: "/staff",
   },
   {
     label: "Report",
